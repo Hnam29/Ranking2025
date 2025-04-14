@@ -7,7 +7,7 @@ import sys
 from get_data_from_db import execute_sql_to_dataframe
 
 def main_web():
-   with open('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/RANKING/2025/webpages/web.css')as f:
+   with open('/webpages/web.css')as f:
       st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
    sql_query = f"""
@@ -64,7 +64,7 @@ def main_web():
             data = f.read()
          return base64.b64encode(data).decode()
       
-      img = get_img_as_base64('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/webpages/bg2.jpeg')
+      img = get_img_as_base64('/webpages/bg2.jpeg')
       page_bg_img = f"""
       <style>
          div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {{
@@ -88,14 +88,6 @@ def main_web():
                               - 3. Benchmark websites against each other or against ideal standards in the edtech domain
                               - 4. Create a scoring system that is transparent and justifiable
                   """)
-      
-      # with separate_line:
-      #    st.markdown(
-      #       """
-      #       <div style="border-left: 1.5px solid; height: 320px; margin: 10px 0px 20px; background-image: linear-gradient(to right, #c23640, #96d9a4); "></div>
-      #       """,
-      #       unsafe_allow_html=True
-      #    )
 
       with content2_column:
          st.subheader("""
@@ -109,13 +101,6 @@ def main_web():
                               - 2. Identify the "best" website from a set of criteria 
                   """)
          
-      # st.markdown("---")
-      # st.markdown(
-      #       """
-      #       <div style="border-bottom: 2px solid; height: 4px; margin: 10px 0px 20px; background-image: linear-gradient(to right, #96d9a4, #c23640); "></div>
-      #       """,
-      #       unsafe_allow_html=True
-      #    )
 
    with scorecard_filter1_container:
       ######## MAIN ########
@@ -219,15 +204,7 @@ def main_web():
                      Proportion of criteria contribute to web ranking score
                      </h4>
                      """, unsafe_allow_html=True)
-         # if selected_Segment is not None and selected_Category is not None:
-         #    st.markdown(f"""(filtered by {selected_Segment} and {selected_Category})
-         #                """, unsafe_allow_html=True)
-         # elif selected_Segment is not None and selected_Category is None:
-         #    st.markdown(f"""(filtered by {selected_Segment})
-         #                """, unsafe_allow_html=True)
-         # elif selected_Segment is None and selected_Category is not None:
-         #    st.markdown(f"""(filtered by {selected_Category})
-         #                """, unsafe_allow_html=True)
+   
       with separate_line:
          st.markdown(
             """
@@ -393,20 +370,6 @@ def main_web():
 
       with scorecard2_column:
          selected_web_str = ", ".join(f"'{city}'" for city in selected_web)
-
-         # sql = f"""
-         #    SELECT  dim_ranking_web.edtech_name AS edtech_name,
-         #          fact_ranking_web.`target-website_speed_(%)` AS website_speed,
-         #          fact_ranking_web.`target-website_authority` AS website_authority,
-         #          fact_ranking_web.`target-website_security/privacy` AS website_security,
-         #          fact_ranking_web.`target-accessibility_compliance` AS accessibility,
-         #          fact_ranking_web.`target-navigation_&_readability` AS readability
-         #    FROM fact_ranking_web 
-         #    INNER JOIN dim_ranking_web
-         #    ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
-         #    WHERE dim_ranking_web.edtech_name IN ({selected_web_str}) AND dim_ranking_web.category = {category_filter} AND dim_ranking_web.segment = {segment_filter}
-         # """
-         # data = execute_sql_to_dataframe(sql)
 
          # Base query
          sql = f"""
