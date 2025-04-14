@@ -5,99 +5,6 @@ def main_feedback():
     # st.markdown("<h1 style='text-align: center;'>Phản hồi</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; margin-bottom: 20px; background-image: linear-gradient(to right, #96d9a4, #c23640); color:#061c04;'>"
                     "Want to join the ranking system?</h2>", unsafe_allow_html=True) 
-    
-    # # Filter for feedback type
-    # feedback_types = ["Đánh giá", "Câu hỏi", "Phản hồi", "Tư vấn", "Hợp tác"]
-    # feedback_type = st.selectbox("Loại phản hồi", feedback_types)
-    
-    # # Feedback form
-    # # st.subheader(f"Biểu mẫu {feedback_type}")
-    # st.markdown(f"<h4 style='text-align: center;'>Biểu mẫu {feedback_type}</h4>", unsafe_allow_html=True)
-
-    # # --- Data Definitions (Example) ---
-    # # You could store field definitions like this
-    # form_structures = {
-    #     "Đánh giá": [
-    #         {"label": "Họ và tên", "widget": "text_input", "key": "dg_name"},
-    #         {"label": "Email", "widget": "text_input", "key": "dg_email"},
-    #         {"label": "Sản phẩm/Dịch vụ đánh giá", "widget": "text_input", "key": "dg_product"},
-    #         {"label": "Xếp hạng (1-5)", "widget": "slider", "args": [1, 5, 3], "key": "dg_rating"}, # Example: Min, Max, Default
-    #         {"label": "Nội dung đánh giá", "widget": "text_area", "kwargs": {"height": 150}, "key": "dg_message"},
-    #     ],
-    #     "Câu hỏi": [
-    #         {"label": "Họ và tên", "widget": "text_input", "key": "ch_name"},
-    #         {"label": "Email", "widget": "text_input", "key": "ch_email"},
-    #         {"label": "Chủ đề câu hỏi", "widget": "text_input", "key": "ch_subject"},
-    #         {"label": "Nội dung câu hỏi", "widget": "text_area", "kwargs": {"height": 150}, "key": "ch_message"},
-    #     ],
-    #     "Phản hồi": [ # Using your original structure
-    #         {"label": "Họ và tên", "widget": "text_input", "key": "ph_name"},
-    #         {"label": "Email", "widget": "text_input", "key": "ph_email"},
-    #         {"label": "Số điện thoại", "widget": "text_input", "key": "ph_phone"},
-    #         {"label": "Công ty", "widget": "text_input", "key": "ph_company"},
-    #         {"label": "Chức vụ", "widget": "text_input", "key": "ph_role"},
-    #         {"label": "Sản phẩm quan tâm", "widget": "text_input", "key": "ph_product"},
-    #         {"label": "Nội dung phản hồi", "widget": "text_area", "kwargs": {"height": 150}, "key": "ph_message"},
-    #     ],
-    #     "Tư vấn": [
-    #         {"label": "Họ và tên", "widget": "text_input", "key": "tv_name"},
-    #         {"label": "Email", "widget": "text_input", "key": "tv_email"},
-    #         {"label": "Số điện thoại", "widget": "text_input", "key": "tv_phone"},
-    #         {"label": "Công ty", "widget": "text_input", "key": "tv_company"},
-    #         {"label": "Lĩnh vực cần tư vấn", "widget": "text_input", "key": "tv_topic"},
-    #         {"label": "Mô tả yêu cầu tư vấn", "widget": "text_area", "kwargs": {"height": 150}, "key": "tv_message"},
-    #     ],
-    #     "Hợp tác": [
-    #         {"label": "Tên người liên hệ", "widget": "text_input", "key": "ht_contact_name"},
-    #         {"label": "Tên công ty", "widget": "text_input", "key": "ht_company"},
-    #         {"label": "Email công ty", "widget": "text_input", "key": "ht_email"},
-    #         {"label": "Số điện thoại công ty", "widget": "text_input", "key": "ht_phone"},
-    #         {"label": "Website công ty", "widget": "text_input", "kwargs":{"placeholder": "https://..."}, "key": "ht_website"},
-    #         {"label": "Nội dung đề xuất hợp tác", "widget": "text_area", "kwargs": {"height": 150}, "key": "ht_message"},
-    #     ]
-    # }
-
-    # # Dictionary to store submitted data
-    # submitted_data = {}
-
-    # with st.form(key=f"form_{feedback_type}", clear_on_submit=True): # Unique key for the form
-
-    #     # Get the fields for the selected type, default to empty list if not found
-    #     fields_to_render = form_structures.get(feedback_type, [])
-
-    #     # You might want layout columns here, e.g., col1, col2 = st.columns(2)
-    #     # and then alternate `with col1:` / `with col2:` based on field index
-
-    #     for field_def in fields_to_render:
-    #         label = field_def["label"]
-    #         widget_type = field_def["widget"]
-    #         key = field_def["key"] # Use the unique key
-    #         args = field_def.get("args", []) # Positional arguments for widget
-    #         kwargs = field_def.get("kwargs", {}) # Keyword arguments for widget
-
-    #         # Render the widget based on its type
-    #         if widget_type == "text_input":
-    #             submitted_data[key] = st.text_input(label, *args, key=key, **kwargs)
-    #         elif widget_type == "text_area":
-    #             submitted_data[key] = st.text_area(label, *args, key=key, **kwargs)
-    #         elif widget_type == "slider":
-    #             submitted_data[key] = st.slider(label, *args, key=key, **kwargs)
-    #         elif widget_type == "selectbox":
-    #             submitted_data[key] = st.selectbox(label, *args, key=key, **kwargs)
-    #         # Add other widget types (radio, number_input, etc.) as needed
-    #         # Example:
-    #         # elif widget_type == "number_input":
-    #         #     submitted_data[key] = st.number_input(label, *args, key=key, **kwargs)
-
-    #     # Submit button at the end
-    #     submit_button = st.form_submit_button("Gửi phản hồi")
-
-    # if submit_button:
-    #     # Process the submitted_data dictionary here
-    #     # For example, print it or send it somewhere
-    #     st.success(f"Phản hồi loại '{feedback_type}' của bạn đã được gửi!")
-    #     st.write("Dữ liệu đã gửi:")
-    #     st.json(submitted_data) # Display the collected data
 
     from datetime import datetime
     import uuid
@@ -234,7 +141,7 @@ def main_feedback():
     from google.oauth2.service_account import Credentials
     import pandas as pd
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    SERVICE_ACCOUNT_FILE = '/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/Criteria-Scrapers/credentials.json'
+    SERVICE_ACCOUNT_FILE = 'credentials.json'
     credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     gc = gspread.authorize(credentials)
     spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
