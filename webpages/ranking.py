@@ -199,31 +199,31 @@ def main_ranking():
             else:
                 st.warning("No data available for the selected category.")
 
-            sql_query2 = f"""
-                SELECT dim_ranking_web.category, 
-                    fact_ranking_web.`target-referring_domain` AS referring_domain, 
-                    fact_ranking_web.`target-unique_visitor` AS unique_visitor
-                FROM fact_ranking_web
-                INNER JOIN dim_ranking_web 
-                ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
-                """
-            dATA = execute_sql_to_dataframe(sql_query2)
+            # sql_query2 = f"""
+            #     SELECT dim_ranking_web.category, 
+            #         fact_ranking_web.`target-referring_domain` AS referring_domain, 
+            #         fact_ranking_web.`target-unique_visitor` AS unique_visitor
+            #     FROM fact_ranking_web
+            #     INNER JOIN dim_ranking_web 
+            #     ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
+            #     """
+            # dATA = execute_sql_to_dataframe(sql_query2)
 
-            top_product_sales = dATA.groupby('category')['referring_domain'].sum()
-            top_product_sales = top_product_sales.nlargest(10)
-            top_product_sales = pd.DataFrame(top_product_sales).reset_index()
+            # top_product_sales = dATA.groupby('category')['referring_domain'].sum()
+            # top_product_sales = top_product_sales.nlargest(10)
+            # top_product_sales = pd.DataFrame(top_product_sales).reset_index()
             
-            top_product_profit = dATA.groupby('category')['unique_visitor'].sum()
-            top_product_profit = top_product_profit.nlargest(10)
-            top_product_profit = pd.DataFrame(top_product_profit).reset_index()
+            # top_product_profit = dATA.groupby('category')['unique_visitor'].sum()
+            # top_product_profit = top_product_profit.nlargest(10)
+            # top_product_profit = pd.DataFrame(top_product_profit).reset_index()
         
-            chart = alt.Chart(top_product_sales).mark_bar(opacity=0.9,color="#9FC131").encode(
-                    x='sum(referring_domain):Q',
-                    y=alt.Y('category:N', sort='-x')   
-                )
-            chart = chart.properties(title="Top 10 Products" )
+            # chart = alt.Chart(top_product_sales).mark_bar(opacity=0.9,color="#9FC131").encode(
+            #         x='sum(referring_domain):Q',
+            #         y=alt.Y('category:N', sort='-x')   
+            #     )
+            # chart = chart.properties(title="Top 10 Products" )
 
-            st.altair_chart(chart,use_container_width=True)
+            # st.altair_chart(chart,use_container_width=True)
         
         with donutchart_column:
 
