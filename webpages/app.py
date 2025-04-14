@@ -7,7 +7,7 @@ from get_data_from_db import execute_sql_to_dataframe, execute_sql_ddl
 
 def main_app():
 
-    with open('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/RANKING/2025/webpages/app.css')as f:
+    with open('/webpages/app.css')as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
     # SECTIONS
@@ -27,7 +27,7 @@ def main_app():
                 data = f.read()
             return base64.b64encode(data).decode()
         
-        img = get_img_as_base64('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/webpages/bg2.jpeg')
+        img = get_img_as_base64('/webpages/bg2.jpeg')
         page_bg_img = f"""
         <style>
             div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {{
@@ -737,64 +737,6 @@ def main_app():
                         if filtered_rows:
                             filtered_df = pd.DataFrame(filtered_rows)
                             
-                            # import matplotlib.pyplot as plt
-                            # # Calculate overall sentiment scores per keyword
-                            # keyword_sentiment = filtered_df.groupby('keyword').agg({
-                            #     'positive_rate': 'mean',
-                            #     'neutral_rate': 'mean',
-                            #     'negative_rate': 'mean',
-                            #     'review_content': 'count'  # Count number of reviews per keyword
-                            # }).reset_index()
-                            # # Rename review count column for clarity
-                            # keyword_sentiment.rename(columns={'review_content': 'review_count'}, inplace=True)
-
-                            # # Sort keywords for a cleaner display
-                            # keyword_sentiment = keyword_sentiment.sort_values('keyword')
-
-                            # # Create horizontal stacked bar chart
-                            # st.subheader("Sentiment Analysis by Keyword")
-
-                            # fig, ax = plt.subplots(figsize=(10, len(keyword_sentiment) * 0.8 + 2))
-
-                            # # Set colors for sentiment segments
-                            # colors = ['#4CAF50', '#FFC107', '#F44336']  # Green, Yellow, Red
-                            # bar_height = 0.6
-
-                            # # Generate bar positions
-                            # y_pos = np.arange(len(keyword_sentiment))
-                            # left = np.zeros(len(keyword_sentiment))  # Track bar start positions
-
-                            # # Plot stacked bars
-                            # for i, col in enumerate(['positive_rate', 'neutral_rate', 'negative_rate']):
-                            #     ax.barh(y_pos, keyword_sentiment[col], height=bar_height, 
-                            #             left=left, color=colors[i])
-                            #     left += keyword_sentiment[col]
-
-                            # # Add total review count at the head of each bar
-                            # for i, keyword in enumerate(keyword_sentiment['keyword']):
-                            #     total_reviews = keyword_sentiment.loc[keyword_sentiment['keyword'] == keyword, 'review_count'].values[0]
-                            #     ax.text(left[i], i, f" {total_reviews}", ha='left', va='center', fontsize=12, fontweight='bold')
-
-                            # # Adjust labels inside bars
-                            # for i, keyword in enumerate(keyword_sentiment['keyword']):
-                            #     x_pos = 0
-                            #     for col in ['positive_rate', 'neutral_rate', 'negative_rate']:
-                            #         value = keyword_sentiment.loc[keyword_sentiment['keyword'] == keyword, col].values[0]
-                            #         if value > 0.05:  # Display text only for meaningful segments
-                            #             ax.text(x_pos + value / 2, i, f"{(value / 100):.2%}", ha='center', va='center', color='black', fontsize=10)
-                            #         x_pos += value
-
-                            # # Remove x-axis labels and legend
-                            # ax.set_xticks([])
-                            # ax.set_yticks(y_pos)
-                            # ax.set_yticklabels(keyword_sentiment['keyword'], fontsize=12)
-                            # ax.set_title('Sentiment Analysis by Keyword', fontsize=14)
-                            # ax.grid(axis='x', linestyle='--', alpha=0.7)
-
-                            # # Optimize layout
-                            # plt.tight_layout()
-                            # st.pyplot(fig)
-
                             import plotly.graph_objects as go
 
                             # Aggregate sentiment scores and count total reviews
@@ -898,21 +840,10 @@ def main_app():
                     JOIN fact_ranking_app AS f ON d.edtech_url = f.edtech_url
                     WHERE d.app_type = 'Android' AND f.`download_-_11/24` > 0 AND f.`download_-_12/24` > 0 AND f.`download_-_01/25` > 0 AND f.`download_-_02/25` > 0
                     """
-                # # Add conditions dynamically
-                # conditions = []
-                # if segment_sel:
-                #     conditions.append(f"segment = '{segment_sel}'")
-                # if category_sel:
-                #     conditions.append(f"category = '{category_sel}'")
-
-                # # Append conditions if they exist
-                # if conditions:
-                #     sql_query3 += " AND " + " AND ".join(conditions)
 
                 app = execute_sql_to_dataframe(sql_comparison)
                 app_name = st.multiselect("Select app", app['edtech_name'],key='compare')
 
-        
             with col2:
                 pass
 
@@ -920,12 +851,6 @@ def main_app():
 
                 # keyword_conditions = " AND ".join([f"d.edtech_name = '{single_app}'" for single_app in app_name])
 
-                # sql_comparison2 = f"""
-                #     SELECT *
-                #     FROM dim_ranking_app AS d
-                #     JOIN fact_ranking_app AS f ON d.edtech_url = f.edtech_url
-                #     WHERE ({keyword_conditions})
-                #     """
                 app_name_tuple = tuple(app_name)  # Convert list to tuple
                 sql_comparison2 = f"""
                     WITH sentiment_agg AS (
@@ -966,50 +891,6 @@ def main_app():
                 styled_df = app2.style.apply(highlight_max, subset=numeric_cols)
 
                 st.dataframe(styled_df)
-
-
-                # import plotly.graph_objects as go
-                # import random
-
-                # def create_horizontal_boxplot(data, title):
-                #     """Creates a horizontal box plot for sentiment scores."""
-
-                #     fig = go.Figure()
-
-                #     for category, scores in data.items():
-                #         fig.add_trace(go.Box(
-                #             y=[category] * len(scores),
-                #             x=scores,
-                #             name=category,
-                #             orientation='h',
-                #             marker_color='lightseagreen',
-                #             boxpoints='all',  # Show all data points
-                #             jitter=0.3,       # Add some jitter for better visibility
-                #             pointpos=-1.8      # Adjust point position
-                #         ))
-
-                #     fig.update_layout(
-                #         title=title,
-                #         xaxis_title="Sentiment Score (0 to 1)",
-                #         yaxis_title="Object",
-                #         xaxis=dict(range=[0, 1]),  # Set x-axis range to 0-1
-                #         height=400,
-                #         width=800
-                #     )
-
-                #     return fig
-
-                # st.markdown("<h6 style='text-align: center;'>Sentiment Score Box Plot</h6>", unsafe_allow_html=True)
-
-                # data = {
-                #     "Object A": [random.uniform(0, 1) for _ in range(50)],
-                #     "Object B": [random.uniform(0.2, 0.8) for _ in range(40)],
-                #     "Object C": [random.uniform(0.1, 0.6) for _ in range(60)]
-                # }
-
-                # # Create and display the chart
-                # fig = create_horizontal_boxplot(data, "")
-                # st.plotly_chart(fig)
             
             else:
                 st.info("Please select 2 apps to compare.")
