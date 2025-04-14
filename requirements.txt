@@ -34,7 +34,7 @@ streamlit_folium==0.24.0
 streamlit-gsheets==0.0.1
 streamlit-image-coordinates==0.1.9
 streamlit-keyup==0.3.0
-streamlit-option-menu==0.4.0
+streamlit-option-menu
 streamlit-player==0.1.5
 streamlit-timeline==0.0.2
 streamlit-toggle-switch==1.0.2
