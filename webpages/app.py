@@ -7,7 +7,7 @@ from get_data_from_db import execute_sql_to_dataframe, execute_sql_ddl
 
 def main_app():
 
-    with open('/webpages/app.css')as f:
+    with open('./webpages/app.css')as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
     # SECTIONS
@@ -27,7 +27,7 @@ def main_app():
                 data = f.read()
             return base64.b64encode(data).decode()
         
-        img = get_img_as_base64('/webpages/bg2.jpeg')
+        img = get_img_as_base64('./webpages/bg2.jpeg')
         page_bg_img = f"""
         <style>
             div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {{
