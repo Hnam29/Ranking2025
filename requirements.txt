@@ -9,5 +9,6 @@ numpy==1.26.3
 pandas==2.1.4
 plotly==5.15.0
 SQLAlchemy==2.0.36
+PyMySQL==1.1.1
 streamlit-card==1.0.2
 rich==13.7.0
