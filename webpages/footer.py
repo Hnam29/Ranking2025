@@ -1,6 +1,7 @@
 # import streamlit as st
 
-# def footer():
+def footer():
+            pass()
 #     footer = """
 #         <style>
 #         a:link , a:visited{
