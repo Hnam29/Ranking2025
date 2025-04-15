@@ -7,7 +7,7 @@ from webpages.feedback import main_feedback
 
 st.set_page_config(page_title="Multiple Dashboards", page_icon="📈",layout="wide",initial_sidebar_state='collapsed')
 
-st.logo("/webpages/Logo.png")
+st.logo("./webpages/Logo.png")
 
 page = option_menu(None, ["Ranking", "Web",  "App", 'Feedback'], 
     icons=['list-ol', 'browser-chrome', "google-play", 'chat-left-text'], 
