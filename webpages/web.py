@@ -240,9 +240,7 @@ def main_web():
              sql2 += " AND " + " AND ".join(conditions)
          
          sql2 += " LIMIT 7"
-         
-         st.code(sql2) 
-         
+                  
          data = execute_sql_to_dataframe(sql2)
 
          import altair as alt
