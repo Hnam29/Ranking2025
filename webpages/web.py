@@ -21,31 +21,30 @@ def main_web():
    category = execute_sql_to_dataframe(sql_query2)
 
    ddl_sql = """   
-   DROP VIEW IF EXISTS view_transformed_grouped_criteria;
+   DROP TABLE IF EXISTS transformed_grouped_criteria;
 
-      CREATE VIEW view_transformed_grouped_criteria AS
+      CREATE TABLE transformed_grouped_criteria AS
       SELECT 
         edtech_url,
+        (0.3 * LOG10(IFNULL(NULLIF(`target-backlink`, 0), 1))) + 
+        (0.34 * LOG10(IFNULL(NULLIF(`target-referring_domain`, 0), 1))) +  
+        (0.34 * LOG10(IFNULL(NULLIF(`target-backlink_quality`, 0), 1))) AS backlink,
       
-        (0.3 * (LOG(IFNULL(NULLIF(`target-backlink`, 0), 1)) / LOG(10))) + 
-        (0.34 * (LOG(IFNULL(NULLIF(`target-referring_domain`, 0), 1)) / LOG(10))) +  
-        (0.34 * (LOG(IFNULL(NULLIF(`target-backlink_quality`, 0), 1)) / LOG(10))) AS backlink,
+        (0.5 * LOG10(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1))) + 
+        (0.5 * LOG10(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1))) AS keyword,
       
-        (0.5 * (LOG(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1)) / LOG(10))) + 
-        (0.5 * (LOG(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1)) / LOG(10))) AS keyword,
+        (0.35 * LOG10(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1))) + 
+        (0.32 * LOG10(IFNULL(NULLIF(`target-website_authority`, 0), 1))) +  
+        (0.33 * LOG10(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1))) AS website_performance_internal,
       
-        (0.35 * (LOG(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1)) / LOG(10))) + 
-        (0.32 * (LOG(IFNULL(NULLIF(`target-website_authority`, 0), 1)) / LOG(10))) +  
-        (0.33 * (LOG(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1)) / LOG(10))) AS website_performance_internal,
-      
-        (0.6 * (LOG(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1)) / LOG(10))) + 
-        (0.4 * (LOG(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1)) / LOG(10))) AS website_performance_external
-      
+        (0.6 * LOG10(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1))) + 
+        (0.4 * LOG10(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1))) AS website_performance_external
       FROM fact_ranking_web;
+
    """
    execute_sql_to_dataframe(ddl_sql)
 
-   dml_sql = "SELECT * FROM view_transformed_grouped_criteria;"
+   dml_sql = "SELECT * FROM transformed_grouped_criteria;"
    data = execute_sql_to_dataframe(dml_sql)
 
    # SECTIONS
@@ -218,15 +217,15 @@ def main_web():
 
          sql2 = """
                 SELECT dim_ranking_web.edtech_name AS edtech_name, 
-                       view_transformed_grouped_criteria.backlink AS backlink,
-                       view_transformed_grouped_criteria.keyword AS keyword,
-                       view_transformed_grouped_criteria.website_performance_external AS performance_external,
-                       view_transformed_grouped_criteria.website_performance_internal AS performance_internal
+                       transformed_grouped_criteria.backlink AS backlink,
+                       transformed_grouped_criteria.keyword AS keyword,
+                       transformed_grouped_criteria.website_performance_external AS performance_external,
+                       transformed_grouped_criteria.website_performance_internal AS performance_internal
                 FROM fact_ranking_web
                 INNER JOIN dim_ranking_web 
                   ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
-                INNER JOIN view_transformed_grouped_criteria
-                  ON dim_ranking_web.edtech_url = view_transformed_grouped_criteria.edtech_url
+                INNER JOIN transformed_grouped_criteria
+                  ON dim_ranking_web.edtech_url = transformed_grouped_criteria.edtech_url
                 WHERE 1=1
             """
             
