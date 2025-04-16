@@ -4,7 +4,7 @@ from streamlit_extras.metric_cards import style_metric_cards
 import altair as alt
 from webpages.footer import footer
 import sys
-from get_data_from_db import execute_sql_to_dataframe
+from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_ranking():
 
