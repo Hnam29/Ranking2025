@@ -146,11 +146,9 @@ def main_web():
 
       with complex_column:
          sql2 = """
-            SELECT COLUMN_NAME AS criteria
-            FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = 'fact_ranking_web'
-            AND TABLE_SCHEMA = 'EdtechAgency_Ranking2025'
-            AND COLUMN_NAME NOT IN ('edtech_url');
+            SELECT name AS criteria
+            FROM pragma_table_info('fact_ranking_web')
+            WHERE name != 'edtech_url';
          """
          metric2= execute_sql_to_dataframe(sql2)
          selections = st.multiselect('Choose criteria', metric2['criteria'].tolist(), placeholder= 'Max 4 selections', max_selections=4)
