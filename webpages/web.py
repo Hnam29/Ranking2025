@@ -217,35 +217,33 @@ def main_web():
       with stackedbarchart_column:
 
          sql2 = """
-            SELECT dim_ranking_web.edtech_name AS edtech_name, 
-                  view_transformed_grouped_criteria.backlink AS backlink,
-                  view_transformed_grouped_criteria.keyword AS keyword,
-                  view_transformed_grouped_criteria.website_performance_external AS performance_external,
-                  view_transformed_grouped_criteria.website_performance_internal AS performance_internal
-            FROM fact_ranking_web
-            INNER JOIN dim_ranking_web 
-            ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
-            INNER JOIN view_transformed_grouped_criteria
-            ON dim_ranking_web.edtech_url = view_transformed_grouped_criteria.edtech_url
-            WHERE 1=1
-         """
-
-         # Add conditions dynamically
-         conditions = []
-         if selected_Segment:
-            conditions.append(f"dim_ranking_web.segment = '{selected_Segment}'")
-         if selected_Category:
-            conditions.append(f"dim_ranking_web.category = '{selected_Category}'")
-
-         # Append conditions if they exist
-         if conditions:
-            sql2 += " AND " + " AND ".join(conditions)
-
-         # Add LIMIT
-         sql2 += " LIMIT 7"
-
-         # Execute query
-         data = execute_sql_to_dataframe(sql2)
+                SELECT dim_ranking_web.edtech_name AS edtech_name, 
+                       view_transformed_grouped_criteria.backlink AS backlink,
+                       view_transformed_grouped_criteria.keyword AS keyword,
+                       view_transformed_grouped_criteria.website_performance_external AS performance_external,
+                       view_transformed_grouped_criteria.website_performance_internal AS performance_internal
+                FROM fact_ranking_web
+                INNER JOIN dim_ranking_web 
+                  ON fact_ranking_web.edtech_url = dim_ranking_web.edtech_url
+                INNER JOIN view_transformed_grouped_criteria
+                  ON dim_ranking_web.edtech_url = view_transformed_grouped_criteria.edtech_url
+                WHERE 1=1
+            """
+            
+            conditions = []
+            if selected_Segment:
+                conditions.append(f"dim_ranking_web.segment = '{selected_Segment}'")
+            if selected_Category:
+                conditions.append(f"dim_ranking_web.category = '{selected_Category}'")
+            
+            if conditions:
+                sql2 += " AND " + " AND ".join(conditions)
+            
+            sql2 += " LIMIT 7"
+            
+            st.code(sql2) 
+            
+            data = execute_sql_to_dataframe(sql2)
 
          import altair as alt
 
