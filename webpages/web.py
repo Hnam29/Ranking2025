@@ -230,20 +230,20 @@ def main_web():
                 WHERE 1=1
             """
             
-            conditions = []
-            if selected_Segment:
-                conditions.append(f"dim_ranking_web.segment = '{selected_Segment}'")
-            if selected_Category:
-                conditions.append(f"dim_ranking_web.category = '{selected_Category}'")
-            
-            if conditions:
-                sql2 += " AND " + " AND ".join(conditions)
-            
-            sql2 += " LIMIT 7"
-            
-            st.code(sql2) 
-            
-            data = execute_sql_to_dataframe(sql2)
+         conditions = []
+         if selected_Segment:
+             conditions.append(f"dim_ranking_web.segment = '{selected_Segment}'")
+         if selected_Category:
+             conditions.append(f"dim_ranking_web.category = '{selected_Category}'")
+         
+         if conditions:
+             sql2 += " AND " + " AND ".join(conditions)
+         
+         sql2 += " LIMIT 7"
+         
+         st.code(sql2) 
+         
+         data = execute_sql_to_dataframe(sql2)
 
          import altair as alt
 
