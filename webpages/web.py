@@ -21,23 +21,26 @@ def main_web():
    category = execute_sql_to_dataframe(sql_query2)
 
    ddl_sql = """   
-   CREATE OR REPLACE VIEW view_transformed_grouped_criteria AS
+   DROP VIEW IF EXISTS view_transformed_grouped_criteria;
+
+      CREATE VIEW view_transformed_grouped_criteria AS
       SELECT 
-      edtech_url,
-      (0.3 * LOG10(IFNULL(NULLIF(`target-backlink`, 0), 1))) + 
-      (0.34 * LOG10(IFNULL(NULLIF(`target-referring_domain`, 0), 1))) +  
-      (0.34 * LOG10(IFNULL(NULLIF(`target-backlink_quality`, 0), 1))) AS backlink,
-
-      (0.5 * LOG10(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1))) + 
-      (0.5 * LOG10(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1))) AS keyword,
-
-      (0.35 * LOG10(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1))) + 
-      (0.32 * LOG10(IFNULL(NULLIF(`target-website_authority`, 0), 1))) +  
-      (0.33 * LOG10(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1))) AS website_performance_internal,
-
-      (0.6 * LOG10(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1))) + 
-      (0.4 * LOG10(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1))) AS website_performance_external
-
+        edtech_url,
+      
+        (0.3 * (LOG(IFNULL(NULLIF(`target-backlink`, 0), 1)) / LOG(10))) + 
+        (0.34 * (LOG(IFNULL(NULLIF(`target-referring_domain`, 0), 1)) / LOG(10))) +  
+        (0.34 * (LOG(IFNULL(NULLIF(`target-backlink_quality`, 0), 1)) / LOG(10))) AS backlink,
+      
+        (0.5 * (LOG(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1)) / LOG(10))) + 
+        (0.5 * (LOG(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1)) / LOG(10))) AS keyword,
+      
+        (0.35 * (LOG(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1)) / LOG(10))) + 
+        (0.32 * (LOG(IFNULL(NULLIF(`target-website_authority`, 0), 1)) / LOG(10))) +  
+        (0.33 * (LOG(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1)) / LOG(10))) AS website_performance_internal,
+      
+        (0.6 * (LOG(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1)) / LOG(10))) + 
+        (0.4 * (LOG(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1)) / LOG(10))) AS website_performance_external
+      
       FROM fact_ranking_web;
    """
    execute_sql_to_dataframe(ddl_sql)
