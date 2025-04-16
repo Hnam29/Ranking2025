@@ -6,9 +6,11 @@ import os
 print("Initializing SQLite database module...")
 
 # --- SQLite Configuration ---
-db_path = 'EA_Ranking2025.db'  
-os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure directory exists
-
+db_path = 'EA_Ranking2025.db'
+db_dir = os.path.dirname(db_path)
+if db_dir:
+    os.makedirs(db_dir, exist_ok=True)
+    
 # --- Engine Creation Helper ---
 def _get_sqlite_engine(db_file_path: str):
     """
