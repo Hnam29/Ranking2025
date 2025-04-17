@@ -20,29 +20,29 @@ def main_web():
       """
    category = execute_sql_to_dataframe(sql_query2)
 
-   ddl_sql = """   
-      CREATE TABLE IF NOT EXISTS transformed_grouped_criteria AS
-      SELECT 
-        edtech_url,
-        (0.3 * LOG10(IFNULL(NULLIF(`target-backlink`, 0), 1))) + 
-        (0.34 * LOG10(IFNULL(NULLIF(`target-referring_domain`, 0), 1))) +  
-        (0.34 * LOG10(IFNULL(NULLIF(`target-backlink_quality`, 0), 1))) AS backlink,
+   # ddl_sql = """   
+   #    CREATE TABLE IF NOT EXISTS transformed_grouped_criteria AS
+   #    SELECT 
+   #      edtech_url,
+   #      (0.3 * LOG10(IFNULL(NULLIF(`target-backlink`, 0), 1))) + 
+   #      (0.34 * LOG10(IFNULL(NULLIF(`target-referring_domain`, 0), 1))) +  
+   #      (0.34 * LOG10(IFNULL(NULLIF(`target-backlink_quality`, 0), 1))) AS backlink,
       
-        (0.5 * LOG10(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1))) + 
-        (0.5 * LOG10(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1))) AS keyword,
+   #      (0.5 * LOG10(IFNULL(NULLIF((0.7 * `target-brand_keyword` + 0.3 * `target-non-brand_keyword`), 0), 1))) + 
+   #      (0.5 * LOG10(IFNULL(NULLIF(`target-keyword_difficulty`, 0), 1))) AS keyword,
       
-        (0.35 * LOG10(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1))) + 
-        (0.32 * LOG10(IFNULL(NULLIF(`target-website_authority`, 0), 1))) +  
-        (0.33 * LOG10(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1))) AS website_performance_internal,
+   #      (0.35 * LOG10(IFNULL(NULLIF(`target-website_speed_(%)`, 0), 1))) + 
+   #      (0.32 * LOG10(IFNULL(NULLIF(`target-website_authority`, 0), 1))) +  
+   #      (0.33 * LOG10(IFNULL(NULLIF(`target-website_security/privacy`, 0), 1))) AS website_performance_internal,
       
-        (0.6 * LOG10(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1))) + 
-        (0.4 * LOG10(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1))) AS website_performance_external
-      FROM fact_ranking_web;
+   #      (0.6 * LOG10(IFNULL(NULLIF(`target-accessibility_compliance`, 0), 1))) + 
+   #      (0.4 * LOG10(IFNULL(NULLIF(`target-navigation_&_readability`, 0), 1))) AS website_performance_external
+   #    FROM fact_ranking_web;
 
-   """
-   execute_sql_ddl(ddl_sql)
+   # """
+   # execute_sql_ddl(ddl_sql)
 
-   dml_sql = "SELECT * FROM transformed_grouped_criteria;"
+   dml_sql = "SELECT * FROM transformed_web_grouped_criteria;"
    data = execute_sql_to_dataframe(dml_sql)
    st.write(data.head(5))
 
