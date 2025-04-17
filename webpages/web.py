@@ -4,7 +4,7 @@ from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.metric_cards import style_metric_cards
 from webpages.footer import footer
 import sys
-from get_data_from_sqlite import execute_sql_to_dataframe
+from get_data_from_sqlite import execute_sql_to_dataframe, execute_sql_ddl
 
 def main_web():
    with open('./webpages/web.css')as f:
