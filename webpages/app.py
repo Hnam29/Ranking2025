@@ -100,7 +100,7 @@ def main_app():
             dml_sql = f"""
                 SELECT d.edtech_name, t.*
                 FROM dim_ranking_app AS d
-                JOIN transformed_grouped_criteria AS t ON d.edtech_url = t.edtech_url
+                JOIN transformed_app_grouped_criteria AS t ON d.edtech_url = t.edtech_url
                 WHERE d.app_type = 'Android'
                 """
             # Add conditions dynamically
