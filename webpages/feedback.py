@@ -137,12 +137,19 @@ def main_feedback():
     # Mock embedded Google Sheet
     st.info("Đang hiển thị dữ liệu được nhúng từ Google Sheet")
 
+    # from google.oauth2.service_account import Credentials
+    from google.oauth2 import service_account
     import gspread
-    from google.oauth2.service_account import Credentials
     import pandas as pd
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    SERVICE_ACCOUNT_FILE = 'credentials.json'
-    credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    # SERVICE_ACCOUNT_FILE = 'credentials.json'
+    # credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    
+    service_account_info = st.secrets["GCP_SERVICE_ACCOUNT"]
+    credentials = service_account.Credentials.from_service_account_info(
+        service_account_info,
+        scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+    )
     gc = gspread.authorize(credentials)
     spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
     spreadsheet = gc.open_by_url(spreadsheet_url)
