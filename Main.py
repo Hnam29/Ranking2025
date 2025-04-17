@@ -5,7 +5,7 @@ from webpages.web import main_web
 from webpages.app import main_app
 from webpages.feedback import main_feedback
 
-# st.set_page_config(page_title="Multiple Dashboards", page_icon="📈",layout="wide",initial_sidebar_state='collapsed')
+st.set_page_config(page_title="Multiple Dashboards", page_icon="📚",layout="wide",initial_sidebar_state='collapsed')
 
 st.logo("./webpages/Logo.png")
 
