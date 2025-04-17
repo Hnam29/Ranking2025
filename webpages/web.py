@@ -40,7 +40,7 @@ def main_web():
       FROM fact_ranking_web;
 
    """
-   execute_sql_to_dataframe(ddl_sql)
+   execute_sql_ddl(ddl_sql)
 
    dml_sql = "SELECT * FROM transformed_grouped_criteria;"
    data = execute_sql_to_dataframe(dml_sql)
