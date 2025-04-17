@@ -21,9 +21,7 @@ def main_web():
    category = execute_sql_to_dataframe(sql_query2)
 
    ddl_sql = """   
-   DROP TABLE IF EXISTS transformed_grouped_criteria;
-
-      CREATE TABLE transformed_grouped_criteria AS
+      CREATE TABLE IF NOT EXISTS transformed_grouped_criteria AS
       SELECT 
         edtech_url,
         (0.3 * LOG10(IFNULL(NULLIF(`target-backlink`, 0), 1))) + 
