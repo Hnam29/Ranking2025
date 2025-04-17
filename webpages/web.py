@@ -44,6 +44,7 @@ def main_web():
 
    dml_sql = "SELECT * FROM transformed_grouped_criteria;"
    data = execute_sql_to_dataframe(dml_sql)
+   st.write(data.head(5))
 
    # SECTIONS
    info_container = st.container()
