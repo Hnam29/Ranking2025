@@ -96,60 +96,6 @@ def main_app():
                 st.warning('Note: IOS app has no download number!')
 
         with chart_column:
-            
-            # Tạo bảng tạm thời cho CTE
-            create_temp_sql = """
-            CREATE TEMPORARY TABLE temp_sentiment_agg AS
-            SELECT
-                app_id,
-                dominant_sentiment,
-                count_sentiment,
-                CASE
-                    WHEN dominant_sentiment = 'negative' THEN 1
-                    WHEN dominant_sentiment = 'neutral' THEN 3
-                    WHEN dominant_sentiment = 'positive' THEN 5
-                    ELSE NULL
-                END AS sentiment_encoded
-            FROM (
-                SELECT
-                    app_id,
-                    dominant_sentiment,
-                    COUNT(*) AS count_sentiment,
-                    RANK() OVER (PARTITION BY app_id ORDER BY COUNT(*) DESC) AS rnk
-                FROM fact_ranking_app_review
-                GROUP BY app_id, dominant_sentiment
-            ) ranked
-            WHERE rnk = 1;
-            """
-            execute_sql_ddl(create_temp_sql)
-
-            # Tạo một bảng thường thay vì view (VIEW NOT WORK)
-            create_table_sql = """
-            CREATE TABLE transformed_grouped_criteria AS
-            SELECT
-                d.edtech_url,
-                -- App scalability
-                LOG10(IFNULL(NULLIF((
-                    (f.`download_-_11/24` + f.`download_-_12/24` + f.`download_-_01/25` + f.`download_-_02/25`) / 4
-                ), 0), 1)) AS app_scalability,
-                -- Popularity score
-                (0.3 * LOG10(IFNULL(NULLIF(f.average_monthly_download, 0), 1))) +
-                (0.35 * LOG10(IFNULL(NULLIF(f.star_rate_number, 0), 1))) +
-                (0.35 * LOG10(IFNULL(NULLIF(f.download_number, 0), 1))) AS app_popularity,
-                -- User sentiment
-                (0.333 * LOG10(IFNULL(NULLIF(f.star_number, 0), 1))) +
-                (0.333 * LOG10(IFNULL(NULLIF(s.count_sentiment, 0), 1))) +
-                (0.333 * LOG10(IFNULL(NULLIF(s.sentiment_encoded, 0), 1))) AS user_sentiment
-            FROM fact_ranking_app AS f
-            INNER JOIN dim_ranking_app AS d ON f.edtech_url = d.edtech_url
-            INNER JOIN temp_sentiment_agg AS s ON d.edtech_id = s.app_id
-            WHERE d.app_type = 'Android' 
-            AND f.`download_-_11/24` > 0 
-            AND f.`download_-_12/24` > 0 
-            AND f.`download_-_01/25` > 0 
-            AND f.`download_-_02/25` > 0;
-            """
-            execute_sql_ddl(create_table_sql)
 
             dml_sql = f"""
                 SELECT d.edtech_name, t.*
