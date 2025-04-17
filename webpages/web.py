@@ -20,10 +20,6 @@ def main_web():
       """
    category = execute_sql_to_dataframe(sql_query2)
 
-   dml_sql = "SELECT * FROM transformed_web_grouped_criteria;"
-   data = execute_sql_to_dataframe(dml_sql)
-   st.write(data.head(5))
-
    # SECTIONS
    info_container = st.container()
    scorecard_filter1_container = st.container()
