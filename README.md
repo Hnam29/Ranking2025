@@ -50,7 +50,9 @@ Tools to compare products against peers and ideal standards, supporting better p
   - Others interested in Edtech field
 
 🧠 Why This Matters
+
 With Vietnam’s EdTech industry rapidly expanding, there’s an increasing need for tools that support accountability, transparency, and continuous improvement. Our evaluation system fills this gap by offering objective insights that drive better decisions and foster innovation in education technology.
 
 📌 Get Involved
+
 Whether you're an educator, developer, or simply passionate about improving digital education in Vietnam, we welcome your insights and contributions. Stay tuned for open data, tools, and collaboration opportunities.
