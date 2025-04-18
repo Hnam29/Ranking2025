@@ -2,16 +2,16 @@
 
 ## 🇻🇳 Vietnam EdTech Evaluation System
 📊 Overview
-- This project introduces a comprehensive ranking and evaluation system for educational technology (EdTech) platforms operating in the Vietnamese market. Whether it's a website or mobile app, the system is designed to assess the overall quality, identify top-performing platforms, and benchmark products based on a robust, multi-dimensional framework.
-  
-- Ranking targets to rank the Edtech products on Vietnam market based on groups of criteria.
+- This project introduces a comprehensive ranking and evaluation system for **educational technology** (EdTech) platforms operating in the Vietnamese market. Whether it's a website or mobile app, the system is designed to assess the overall quality, identify top-performing platforms, and benchmark products based on a robust, multi-dimensional framework.
 
-- By applying a wide range of criteria, this framework enables a transparent, fair, and insightful evaluation of EdTech products. The ultimate goal is to foster quality, innovation, and trust in Vietnam’s growing digital education ecosystem.
+- By applying a wide range of criteria, this framework enables a **transparent, fair, and insightful** evaluation of EdTech products. The ultimate goal is to foster quality, innovation, and trust in Vietnam’s growing digital education ecosystem.
+
+- Ranking targets to **rank** the Edtech products on Vietnam market based on groups of criteria.
 
 🎯 Objectives
-- Evaluate the overall quality of individual EdTech websites or apps.
+- Evaluate the overall quality of individual **EdTech websites or apps**.
 
-- Identify the "best" platforms based on weighted scoring across key criteria.
+- Identify the **best** platforms based on weighted scoring across key criteria.
 
 - Benchmark EdTech platforms against each other and against ideal standards in the field.
 
@@ -30,7 +30,7 @@
   - 📈 Benchmarking Tools
     Tools to compare products against peers and ideal standards, supporting better product development and user choice.
 
-👥 Who is this for?
+👥 Who benefits from **Ranking**
   - This evaluation system is useful for a wide range of stakeholders in the EdTech ecosystem:
 
   - Teachers – to choose quality platforms for teaching
