@@ -9,13 +9,13 @@
 - By applying a wide range of criteria, this framework enables a transparent, fair, and insightful evaluation of EdTech products. The ultimate goal is to foster quality, innovation, and trust in Vietnam’s growing digital education ecosystem.
 
 🎯 Objectives
-Evaluate the overall quality of individual EdTech websites or apps.
+- Evaluate the overall quality of individual EdTech websites or apps.
 
-Identify the "best" platforms based on weighted scoring across key criteria.
+- Identify the "best" platforms based on weighted scoring across key criteria.
 
-Benchmark EdTech platforms against each other and against ideal standards in the field.
+- Benchmark EdTech platforms against each other and against ideal standards in the field.
 
-Create a transparent, consistent, and justifiable scoring system for continuous evaluation and comparison.
+- Create a transparent, consistent, and justifiable scoring system for continuous evaluation and comparison.
 
 ⚙️ Key Features
 🔍 Multi-Criteria Framework
@@ -31,21 +31,23 @@ The system works across both websites and mobile apps in the Vietnamese EdTech s
 Tools to compare products against peers and ideal standards, supporting better product development and user choice.
 
 👥 Who is this for?
-This evaluation system is useful for a wide range of stakeholders in the EdTech ecosystem:
+  - This evaluation system is useful for a wide range of stakeholders in the EdTech ecosystem:
 
-Teachers – to choose quality platforms for teaching
+  - Teachers – to choose quality platforms for teaching
 
-Students – to find the best learning experiences
+  - Students – to find the best learning experiences
 
-Parents – to make informed decisions for their children
+  - Parents – to make informed decisions for their children
 
-Administrators – to assess tools before adoption
+  - Administrators – to assess tools before adoption
 
-Developers – to improve product quality based on feedback
+  - Developers – to improve product quality based on feedback
 
-Funders & Investors – to identify promising platforms
+  - Funders & Investors – to identify promising platforms
 
-Researchers & Policymakers – to track and support EdTech development
+  - Researchers & Policymakers – to track and support EdTech development
+
+  - Others interested in Edtech field
 
 🧠 Why This Matters
 With Vietnam’s EdTech industry rapidly expanding, there’s an increasing need for tools that support accountability, transparency, and continuous improvement. Our evaluation system fills this gap by offering objective insights that drive better decisions and foster innovation in education technology.
