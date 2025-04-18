@@ -18,16 +18,16 @@
 - Create a transparent, consistent, and justifiable scoring system for continuous evaluation and comparison.
 
 ⚙️ Key Features
-  🔍 Multi-Criteria Framework
+  - 🔍 Multi-Criteria Framework
     Evaluation is based on a deep framework considering usability, content quality, accessibility, design, interactivity, technical performance, and more.
 
-  🏅 Ranking System
+  - 🏅 Ranking System
     Platforms are scored and ranked according to the framework, providing clear insights into their strengths and weaknesses.
 
-  📱 Web & App Support
+  - 📱 Web & App Support
     The system works across both websites and mobile apps in the Vietnamese EdTech space.
 
-  📈 Benchmarking Tools
+  - 📈 Benchmarking Tools
     Tools to compare products against peers and ideal standards, supporting better product development and user choice.
 
 👥 Who is this for?
