@@ -403,9 +403,20 @@ def main_app():
                 date_range_df = execute_sql_to_dataframe(sql_date_range)
 
                 # Extract min and max date from the result
-                min_available_date = pd.to_datetime(date_range_df['min_date'].iloc[0]).date()
-                max_available_date = pd.to_datetime(date_range_df['max_date'].iloc[0]).date()
-
+                # min_available_date = pd.to_datetime(date_range_df['min_date'].iloc[0]).date()
+                min_date_value = pd.to_datetime(date_range_df['min_date'].iloc[0])
+                if pd.notna(min_date_value):
+                    min_available_date = min_date_value.date()
+                else:
+                    min_available_date = None
+                    
+                # max_available_date = pd.to_datetime(date_range_df['max_date'].iloc[0]).date()
+                max_date_value = pd.to_datetime(date_range_df['max_date'].iloc[0])
+                if pd.notna(min_date_value):
+                    max_available_date = max_date_value.date()
+                else:
+                    max_available_date = None
+                    
                 # Lưu trữ giá trị mặc định trong session state để dùng cho nút reset
                 if 'default_min_date' not in st.session_state:
                     st.session_state.default_min_date = min_available_date
@@ -419,19 +430,23 @@ def main_app():
 
                 # Streamlit UI: Set date inputs with min/max range
                 col1, col2, reset_col = st.columns([2.1, 2.1, 0.7])
-                start_date = col1.date_input('Start date', 
+                if min_available_date is not None and max_available_date is not None:
+                    start_date = col1.date_input('Start date', 
+                                                min_value=min_available_date, 
+                                                max_value=max_available_date, 
+                                                value=min_available_date,  # Default to min_date
+                                                format='YYYY-MM-DD', 
+                                                key='start')
+    
+                    end_date = col2.date_input('End date', 
                                             min_value=min_available_date, 
                                             max_value=max_available_date, 
-                                            value=min_available_date,  # Default to min_date
+                                            value=max_available_date,  # Default to max_date
                                             format='YYYY-MM-DD', 
-                                            key='start')
-
-                end_date = col2.date_input('End date', 
-                                        min_value=min_available_date, 
-                                        max_value=max_available_date, 
-                                        value=max_available_date,  # Default to max_date
-                                        format='YYYY-MM-DD', 
-                                        key='end')
+                                            key='end')
+                else:
+                    col1.info('No start date')
+                    col2.info('No end date')
 
                 reset_col.button("Reset date", on_click=reset_dates, help="Reset dates to default range",use_container_width=True)
 
