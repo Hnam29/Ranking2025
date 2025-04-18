@@ -9,7 +9,7 @@ st.set_page_config(page_title="Multiple Dashboards", page_icon="📚",layout="wi
 
 # Hide the GitHub icon
 hide_github_icon = """
-#GithubIcon {
+#MainMenu {
   visibility: hidden;
 }
 """
