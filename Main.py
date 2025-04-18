@@ -7,6 +7,14 @@ from webpages.feedback import main_feedback
 
 st.set_page_config(page_title="Multiple Dashboards", page_icon="📚",layout="wide",initial_sidebar_state='collapsed')
 
+# Hide the GitHub icon
+hide_github_icon = """
+#GithubIcon {
+  visibility: hidden;
+}
+"""
+st.markdown(hide_github_icon, unsafe_allow_html=True)
+
 st.logo("./webpages/Logo.png")
 
 page = option_menu(None, ["Ranking", "Web",  "App", 'Feedback'], 
