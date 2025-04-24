@@ -9,7 +9,13 @@ def main_app():
 
     # with open('./app.css')as f:
     #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-
+    st.markdown("""
+        <style>
+        body {
+          background-color: yellow !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
     import os    
     # Check what's in the webpages directory
     print(f"Contents of webpages directory: {os.listdir('./webpages')}")
