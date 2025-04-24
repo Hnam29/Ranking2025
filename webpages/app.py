@@ -7,8 +7,36 @@ from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_app():
 
-    with open('./webpages/app.css')as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+    # with open('./webpages/app.css')as f:
+    #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+
+    import os
+    from pathlib import Path
+    import shutil
+    
+    # Find Streamlit's static directory
+    STREAMLIT_STATIC_PATH = Path(st.__path__[0]) / 'static'
+    
+    # Create a directory for CSS if it doesn't exist
+    CSS_PATH = (STREAMLIT_STATIC_PATH / "assets/css")
+    if not CSS_PATH.is_dir():
+        CSS_PATH.mkdir(parents=True, exist_ok=True)
+    
+    # Path to your CSS file in your project
+    your_css_file = "./webpages/app.css"
+    
+    # Path where the CSS file will be copied in Streamlit's static directory
+    target_css_file = CSS_PATH / "app.css"
+    
+    # Copy your CSS file to Streamlit's static directory
+    if not target_css_file.exists():
+        shutil.copy(your_css_file, target_css_file)
+    
+    # Add the CSS link to your page
+    st.markdown(
+        '<link rel="stylesheet" href="assets/css/app.css" type="text/css">',
+        unsafe_allow_html=True
+    )
 
     # SECTIONS
     info_container = st.container()
