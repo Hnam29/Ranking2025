@@ -31,6 +31,7 @@ def main_web():
         
         # If we found the CSS, inject it
         if css_content:
+            st.success('css applied')
             st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
         else:
             st.error('no css loaded')
