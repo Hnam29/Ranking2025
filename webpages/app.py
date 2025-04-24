@@ -10,21 +10,18 @@ def main_app():
     # with open('./app.css')as f:
     #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
-    import os
+    import os    
+    # List all files in the current directory to debug
+    st.write(f"Current working directory: {os.getcwd()}")
+    st.write(f"Files in directory: {os.listdir('.')}")
     
-    # Get the absolute path to your project's root directory
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    css_path = os.path.join(root_dir, 'webpages', 'app.css')
-    
-    # Print the path to verify it's correct
-    print(f"Looking for CSS at: {css_path}")
-    
+    # Try with a relative path from where the script is run
     try:
-        with open(css_path) as f:
+        with open('webpages/app.css') as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        print("CSS loaded successfully")
+        st.write("CSS loaded successfully")
     except FileNotFoundError:
-        print(f"CSS file not found at: {css_path}")
+        st.write("CSS file not found in webpages/app.css")
 
     # SECTIONS
     info_container = st.container()
