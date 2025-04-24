@@ -11,17 +11,16 @@ def main_app():
     #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
     import os    
-    # List all files in the current directory to debug
-    st.write(f"Current working directory: {os.getcwd()}")
-    st.write(f"Files in directory: {os.listdir('.')}")
+    # Check what's in the webpages directory
+    print(f"Contents of webpages directory: {os.listdir('./webpages')}")
     
-    # Try with a relative path from where the script is run
+    # Then try to load CSS
     try:
-        with open('webpages/app.css') as f:
+        with open('./webpages/app.css') as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        st.write("CSS loaded successfully")
-    except FileNotFoundError:
-        st.write("CSS file not found in webpages/app.css")
+        print("CSS loaded successfully")
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
 
     # SECTIONS
     info_container = st.container()
