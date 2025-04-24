@@ -25,6 +25,7 @@ def main_app():
                 if os.path.exists(location):
                     with open(location, "r") as f:
                         css_content = f.read()
+                        st.write(css_content)
                         break
             except:
                 continue
