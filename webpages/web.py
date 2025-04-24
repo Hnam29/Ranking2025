@@ -7,9 +7,35 @@ import sys
 from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_web():
-   with open('./webpages/web.css')as f:
-      st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-
+   # with open('./webpages/web.css')as f:
+   #    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+   try:
+        # Try multiple possible locations for the CSS file
+        css_locations = [
+            "./static/css/app.css",          # Standard location for static files
+            "./webpages/app.css",            # Your current location
+            "../webpages/app.css",           # One level up
+            os.path.join(os.path.dirname(__file__), "webpages/app.css")  # Relative to script
+        ]
+        
+        css_content = None
+        for location in css_locations:
+            try:
+                if os.path.exists(location):
+                    with open(location, "r") as f:
+                        css_content = f.read()
+                        break
+            except:
+                continue
+        
+        # If we found the CSS, inject it
+        if css_content:
+            st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+        else:
+            st.error('no css loaded')
+   except Exception as e:
+        st.error(f"Error loading CSS: {str(e)}")
+           
    sql_query = f"""
       SELECT DISTINCT segment as Segment FROM dim_ranking_web
       """
