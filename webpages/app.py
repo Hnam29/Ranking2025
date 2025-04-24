@@ -7,30 +7,8 @@ from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_app():
 
-    # with open('./webpages/app.css')as f:
-    #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-
-    import os
-    import streamlit.components.v1 as components
-    
-    try:
-        # Path to your CSS file in your project
-        css_file_path = "./webpages/app.css"
-        
-        # Read the CSS content
-        with open(css_file_path) as f:
-            css_content = f.read()
-        
-        # Apply CSS directly using components.html
-        components.html(f"""
-        <style>
-        {css_content}
-        </style>
-        """)
-        
-        print("CSS loaded successfully")
-    except Exception as e:
-        print(f"Error loading CSS: {e}")
+    with open('./webpages/app.css')as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
     # SECTIONS
     info_container = st.container()
