@@ -16,7 +16,7 @@ def main_web():
             "./static/css/web.css",          # Standard location for static files
             "./webpages/web.css",            # Your current location
             "../webpages/web.css",           # One level up
-            os.path.join(os.path.dirname(__file__), "webpages/app.css")  # Relative to script
+            os.path.join(os.path.dirname(__file__), "webpages/web.css")  # Relative to script
         ]
         
         css_content = None
