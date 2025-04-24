@@ -13,9 +13,9 @@ def main_web():
    try:
         # Try multiple possible locations for the CSS file
         css_locations = [
-            "./static/css/app.css",          # Standard location for static files
-            "./webpages/app.css",            # Your current location
-            "../webpages/app.css",           # One level up
+            "./static/css/web.css",          # Standard location for static files
+            "./webpages/web.css",            # Your current location
+            "../webpages/web.css",           # One level up
             os.path.join(os.path.dirname(__file__), "webpages/app.css")  # Relative to script
         ]
         
