@@ -32,10 +32,12 @@ def main_app():
     if not target_css_file.exists():
         shutil.copy(your_css_file, target_css_file)
     
-    # Add the CSS link to your page
-    st.markdown(
-        '<link rel="stylesheet" href="assets/css/app.css" type="text/css">',
-        unsafe_allow_html=True
+    import streamlit.components.v1 as components
+    # bootstrap 4 collapse example
+    components.html(
+    """
+    <link rel="stylesheet" href="assets/css/app.css" type="text/css">
+    """
     )
 
     # SECTIONS
