@@ -11,34 +11,26 @@ def main_app():
     #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
     import os
-    from pathlib import Path
-    import shutil
-    
-    # Find Streamlit's static directory
-    STREAMLIT_STATIC_PATH = Path(st.__path__[0]) / 'static'
-    
-    # Create a directory for CSS if it doesn't exist
-    CSS_PATH = (STREAMLIT_STATIC_PATH / "assets/css")
-    if not CSS_PATH.is_dir():
-        CSS_PATH.mkdir(parents=True, exist_ok=True)
-    
-    # Path to your CSS file in your project
-    your_css_file = "./webpages/app.css"
-    
-    # Path where the CSS file will be copied in Streamlit's static directory
-    target_css_file = CSS_PATH / "app.css"
-    
-    # Copy your CSS file to Streamlit's static directory
-    if not target_css_file.exists():
-        shutil.copy(your_css_file, target_css_file)
-    
     import streamlit.components.v1 as components
-    # bootstrap 4 collapse example
-    components.html(
-    """
-    <link rel="stylesheet" href="assets/css/app.css" type="text/css">
-    """
-    )
+    
+    try:
+        # Path to your CSS file in your project
+        css_file_path = "./webpages/app.css"
+        
+        # Read the CSS content
+        with open(css_file_path) as f:
+            css_content = f.read()
+        
+        # Apply CSS directly using components.html
+        components.html(f"""
+        <style>
+        {css_content}
+        </style>
+        """)
+        
+        print("CSS loaded successfully")
+    except Exception as e:
+        print(f"Error loading CSS: {e}")
 
     # SECTIONS
     info_container = st.container()
