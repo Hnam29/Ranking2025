@@ -7,7 +7,7 @@ import sys
 from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_web():
-   with open('web.css')as f:
+   with open('/webpages/web.css')as f:
       st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
    sql_query = f"""
