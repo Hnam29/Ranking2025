@@ -7,7 +7,7 @@ from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_app():
 
-    with open('./webpages/app.css')as f:
+    with open('./app.css')as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
        
     # SECTIONS
