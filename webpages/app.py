@@ -7,9 +7,16 @@ from get_data_from_sqlite import execute_sql_to_dataframe
 
 def main_app():
 
-    with open('./app.css')as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-       
+    # with open('./app.css')as f:
+    #     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+    import os
+    # Get the directory where the current script is located
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    css_path = os.path.join(current_dir, 'app.css')
+    
+    with open(css_path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
     # SECTIONS
     info_container = st.container()
     filter1_chart1_container = st.container()
