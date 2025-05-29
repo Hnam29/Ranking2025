@@ -250,155 +250,282 @@ def main_ranking():
         st.markdown("---")
 
     with table_container:
+        import base64
+        from pathlib import Path
 
+        def image_to_base64(path):
+            if not isinstance(path, str) or not Path(path).exists():
+                return None  # or return a default image base64 string
+            with open(path, "rb") as img_file:
+                b64_string = base64.b64encode(img_file.read()).decode("utf-8")
+                suffix = Path(path).suffix.lower().replace('.', '')  # e.g., 'png'
+                return f"data:image/{suffix};base64,{b64_string}"
+
+        data_df = pd.read_excel('web_logo_mapping.xlsx')
+
+        # Convert local paths to base64 strings
+        data_df['logo_base64'] = data_df['logo_path'].apply(image_to_base64)
+        
+        st.markdown("""
+            <style>
+            .glow-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff4b1f, #1fddff, #ff4b1f);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+            }
+
+            .title-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            }
+
+            .title-icon {
+            font-size: 2.5em;
+            }
+            @keyframes shine {
+            0% { background-position: 0% }
+            100% { background-position: 100% }
+            }
+            </style>
+
+            <div class="title-container">
+            <span class="glow-text">Innovating Education with Ranking</span>
+            <span class="title-icon">🇻🇳</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+        
+        st.markdown("""
+        <style>
+            .block-container {
+                    padding-bottom: 40px;
+                }
+        </style>
+        """, unsafe_allow_html=True) 
+
+        st.markdown("""
+        <p style='text-align: center;'>
+            The development of criteria for evaluating educational technology products plays a key role in shaping and enhancing the quality of modern education. These criteria help developers and service providers understand user needs and enable consumers, including teachers, students, and educational institutions, to choose the products that best align with their learning and teaching goals.
+            In 2025, EdTech Agency will continue publishing the annual white paper on educational technology and the “Products of the Year” Table. The products will be evaluated based on a set of criteria developed explicitly for the two different platforms: web and app.
+        </p>""", unsafe_allow_html=True)
+
+        st.markdown("""
+        <style>
+            .block-container {
+                    padding-bottom: 40px;
+                }
+        </style>
+        """, unsafe_allow_html=True) 
+        
         table_col1,table_col2,table_col3,table_col4 = st.columns(4)
 
         with table_col1:
-            # Combine the data into ONE dictionary
-            data_dict = {
-                "apps": [
-                    "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
-                    "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
-                    "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
-                    "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
-                ],
-                "price": [20, 950, 250, 500],
-            }
 
-            # Pass the single dictionary to the DataFrame constructor
-            data_df = pd.DataFrame(data_dict)
-
+            data_df_k12 = data_df[data_df['Segment'] == 'K12']
+            # Use data_editor with ImageColumn
             st.data_editor(
-                data_df,
+                data_df_k12[['edtech_name', 'logo_base64']],
                 column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Category 1", help="Streamlit app preview screenshots"
-                    ),
-                    "price": st.column_config.NumberColumn(
-                        "Price (in USD)",
-                        help="The price of the product in USD",
-                        min_value=0,
-                        max_value=1000,
-                        step=1,
-                        format="$%d",
-                    )
+                    "logo_base64": st.column_config.ImageColumn("K12",width='medium')
                 },
                 hide_index=True,
-                key='category1',
-            )
-
-            st.data_editor(
-                data_df,
-                column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit2 app preview screenshots"
-                    )
-                },
-                hide_index=True,
-                key='category2',
+                key='K12'
             )
 
         with table_col2:
-            data_df = pd.DataFrame(
-                {
-                    "apps": [
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
-                    ],
-                }
-            )
 
+            data_df_he = data_df[data_df['Segment'] == 'HE']
+            # Use data_editor with ImageColumn
             st.data_editor(
-                data_df,
+                data_df_he[['edtech_name', 'logo_base64']],
                 column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit app preview screenshots"
-                    )
+                    "logo_base64": st.column_config.ImageColumn("HE",width='medium')
                 },
                 hide_index=True,
-                key='category3',
-            )
-
-            st.data_editor(
-                data_df,
-                column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit2 app preview screenshots"
-                    )
-                },
-                hide_index=True,
-                key='category4',
+                key='HE'
             )
 
         with table_col3:
-            data_df = pd.DataFrame(
-                {
-                    "apps": [
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
-                    ],
-                }
-            )
 
+            data_df_kd = data_df[data_df['Segment'] == 'Mầm non']
+            # Use data_editor with ImageColumn
             st.data_editor(
-                data_df,
+                data_df_kd[['edtech_name', 'logo_base64']],
                 column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit app preview screenshots"
-                    )
+                    "logo_base64": st.column_config.ImageColumn("Mầm non",width='medium')
                 },
                 hide_index=True,
-                key='category5',
-            )
-
-            st.data_editor(
-                data_df,
-                column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit2 app preview screenshots"
-                    )
-                },
-                hide_index=True,
-                key='category6',
+                key='Kindy'
             )
 
         with table_col4:
-            data_df = pd.DataFrame(
-                {
-                    "apps": [
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
-                        "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
-                    ],
-                }
-            )
 
+            data_df_wk = data_df[data_df['Segment'] == 'Đi làm']
+            # Use data_editor with ImageColumn
             st.data_editor(
-                data_df,
+                data_df_wk[['edtech_name', 'logo_base64']],
                 column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit app preview screenshots"
-                    )
+                    "logo_base64": st.column_config.ImageColumn("Đi làm",width='medium')
                 },
                 hide_index=True,
-                key='category7',
+                key='Working'
             )
 
-            st.data_editor(
-                data_df,
-                column_config={
-                    "apps": st.column_config.ImageColumn(
-                        "Preview Image", help="Streamlit2 app preview screenshots"
-                    )
-                },
-                hide_index=True,
-                key='category8',
-            )
+        # table_col1,table_col2,table_col3,table_col4 = st.columns(4)
+
+        # with table_col1:
+        #     # Combine the data into ONE dictionary
+        #     data_dict = {
+        #         "apps": [
+        #             "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
+        #             "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
+        #             "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
+        #             "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
+        #         ],
+        #         "price": [20, 950, 250, 500],
+        #     }
+
+        #     # Pass the single dictionary to the DataFrame constructor
+        #     data_df = pd.DataFrame(data_dict)
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Category 1", help="Streamlit app preview screenshots"
+        #             ),
+        #             "price": st.column_config.NumberColumn(
+        #                 "Price (in USD)",
+        #                 help="The price of the product in USD",
+        #                 min_value=0,
+        #                 max_value=1000,
+        #                 step=1,
+        #                 format="$%d",
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category1',
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit2 app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category2',
+        #     )
+
+        # with table_col2:
+        #     data_df = pd.DataFrame(
+        #         {
+        #             "apps": [
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
+        #             ],
+        #         }
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category3',
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit2 app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category4',
+        #     )
+
+        # with table_col3:
+        #     data_df = pd.DataFrame(
+        #         {
+        #             "apps": [
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
+        #             ],
+        #         }
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category5',
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit2 app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category6',
+        #     )
+
+        # with table_col4:
+        #     data_df = pd.DataFrame(
+        #         {
+        #             "apps": [
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/5435b8cb-6c6c-490b-9608-799b543655d3/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/ef9a7627-13f2-47e5-8f65-3f69bb38a5c2/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/31b99099-8eae-4ff8-aa89-042895ed3843/Home_Page.png",
+        #                 "https://storage.googleapis.com/s4a-prod-share-preview/default/st_app_screenshot_image/6a399b09-241e-4ae7-a31f-7640dc1d181e/Home_Page.png",
+        #             ],
+        #         }
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category7',
+        #     )
+
+        #     st.data_editor(
+        #         data_df,
+        #         column_config={
+        #             "apps": st.column_config.ImageColumn(
+        #                 "Preview Image", help="Streamlit2 app preview screenshots"
+        #             )
+        #         },
+        #         hide_index=True,
+        #         key='category8',
+        #     )
 
 
     footer()
