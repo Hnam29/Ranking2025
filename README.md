@@ -1,4 +1,4 @@
-# Ranking 2025 -[Demo website](https://ranking2025-demo.streamlit.app/)
+# Ranking 2025 - [Demo website](https://ranking2025-demo.streamlit.app/)
 
 ## 🇻🇳 Vietnam EdTech Evaluation System
 📊 Overview
