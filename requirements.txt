@@ -12,3 +12,4 @@ SQLAlchemy==2.0.36
 PyMySQL==1.1.1
 streamlit-card==1.0.2
 rich==13.7.0
+openpyxl==3.1.2
