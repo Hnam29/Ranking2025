@@ -153,17 +153,22 @@ def main_feedback():
     def save_feedback_to_sheets(data, spreadsheet_id="15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"):
         """Save feedback data to Google Sheets"""
         try:
+            st.write("🔄 Đang kết nối với Google Sheets...")  # Debug info
             client = init_feedback_sheets()
             if client is None:
+                st.error("❌ Không thể khởi tạo Google Sheets client")
                 return False
             
+            st.write("📊 Đang mở spreadsheet...")  # Debug info
             # Open the existing spreadsheet
             spreadsheet = client.open_by_key(spreadsheet_id)
             
             # Try to get or create 'FEEDBACK' worksheet
             try:
                 worksheet = spreadsheet.worksheet('FEEDBACK')
+                st.write("✅ Đã tìm thấy worksheet FEEDBACK")  # Debug info
             except gspread.WorksheetNotFound:
+                st.write("🆕 Tạo worksheet FEEDBACK mới...")  # Debug info
                 worksheet = spreadsheet.add_worksheet(title='FEEDBACK', rows=1000, cols=20)
             
             # Get existing headers
@@ -176,22 +181,26 @@ def main_feedback():
             if not headers:
                 headers = list(data.keys())
                 worksheet.append_row(headers)
+                st.write("📝 Đã tạo headers mới")  # Debug info
             
             # Ensure all data keys are in headers (add missing ones)
             missing_headers = [key for key in data.keys() if key not in headers]
             if missing_headers:
                 headers.extend(missing_headers)
                 worksheet.update('1:1', [headers])
+                st.write(f"➕ Đã thêm headers mới: {missing_headers}")  # Debug info
             
             # Create row data in the same order as headers
             row_data = [str(data.get(header, '')) for header in headers]
             
             # Append the data
             worksheet.append_row(row_data)
+            st.write("✅ Đã lưu dữ liệu vào Google Sheets")  # Debug info
             
             return True
         except Exception as e:
-            st.error(f"Error saving feedback to sheets: {e}")
+            st.error(f"❌ Error saving feedback to sheets: {e}")
+            st.write(f"🔍 Spreadsheet ID: {spreadsheet_id}")  # Debug info
             return False
     
     st.markdown("<h2 style='text-align: center; margin-bottom: 20px; background-image: linear-gradient(to right, #96d9a4, #c23640); color:#061c04;'>"
@@ -207,19 +216,23 @@ def main_feedback():
     def send_to_n8n_webhook(data):
         """Send data to n8n webhook"""
         try:
+            st.write(f"🔄 Đang gửi dữ liệu đến webhook: {N8N_WEBHOOK_URL}")  # Debug info
             response = requests.post(
                 N8N_WEBHOOK_URL,
                 json=data,
                 headers={'Content-Type': 'application/json'},
                 timeout=10
             )
+            st.write(f"📡 Webhook response status: {response.status_code}")  # Debug info
             response.raise_for_status()
+            st.write("✅ Webhook sent successfully")  # Debug info
             return True, response.json()
         except requests.exceptions.RequestException as e:
-            st.error(f"Lỗi kết nối với hệ thống: {str(e)}")
+            st.error(f"❌ Lỗi kết nối với webhook: {str(e)}")
+            st.write(f"🔍 URL được sử dụng: {N8N_WEBHOOK_URL}")  # Debug info
             return False, None
         except Exception as e:
-            st.error(f"Lỗi không xác định: {str(e)}")
+            st.error(f"❌ Lỗi webhook không xác định: {str(e)}")
             return False, None
     
     with st.form("feedback_form"):
@@ -337,15 +350,24 @@ def main_feedback():
                 
                 # Show processing message
                 with st.spinner("Đang xử lý phản hồi của bạn..."):
+                    st.write("🚀 Bắt đầu xử lý dữ liệu...")  # Debug info
+                    st.write(f"📋 Dữ liệu được gửi: {entry}")  # Debug info - show what data is being sent
+                    
                     # Save to Google Sheets first
+                    st.write("📊 Đang lưu vào Google Sheets...")
                     sheets_success = save_feedback_to_sheets(entry)
                     
                     # Send to n8n webhook
+                    st.write("🔗 Đang gửi đến n8n webhook...")
                     webhook_success, response = send_to_n8n_webhook(entry)
                     
-                    # Determine overall success
+                    # Show detailed results
+                    st.write(f"📊 Google Sheets result: {sheets_success}")
+                    st.write(f"🔗 Webhook result: {webhook_success}")
+                    
+                    # Determine overall success - FIXED LOGIC
                     if sheets_success and webhook_success:
-                        st.success("Phản hồi của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.")
+                        st.success("✅ Phản hồi của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.")
                         
                         # Optional: Show additional info based on urgency or type
                         if feedback_type == "Câu hỏi" and urgency == "Cao":
@@ -353,15 +375,19 @@ def main_feedback():
                         elif feedback_type == "Tư vấn":
                             st.info("📞 Đội ngũ tư vấn sẽ liên hệ với bạn trong vòng 24 giờ để thảo luận chi tiết.")
                         
-                        # Optional: Clear form by rerunning (you can comment this out if not needed)
-                        # st.experimental_rerun()
                     elif sheets_success and not webhook_success:
-                        st.warning("Phản hồi đã được lưu thành công! Tuy nhiên, hệ thống tự động liên hệ có thể gặp sự cố. Chúng tôi vẫn sẽ xử lý phản hồi của bạn.")
+                        st.warning("⚠️ Phản hồi đã được lưu thành công! Tuy nhiên, hệ thống tự động liên hệ có thể gặp sự cố. Chúng tôi vẫn sẽ xử lý phản hồi của bạn.")
                     elif not sheets_success and webhook_success:
-                        st.warning("Phản hồi đã được gửi thành công! Tuy nhiên, có thể có sự cố với việc lưu trữ dữ liệu. Chúng tôi sẽ liên hệ với bạn sớm nhất.")
+                        st.warning("⚠️ Phản hồi đã được gửi thành công! Tuy nhiên, có thể có sự cố với việc lưu trữ dữ liệu. Chúng tôi sẽ liên hệ với bạn sớm nhất.")
                     else:
-                        st.error("Có lỗi xảy ra khi gửi phản hồi. Vui lòng thử lại sau hoặc liên hệ trực tiếp với chúng tôi.")
+                        st.error("❌ Có lỗi xảy ra khi gửi phản hồi. Vui lòng thử lại sau hoặc liên hệ trực tiếp với chúng tôi.")
                         st.info("🔍 Vui lòng kiểm tra kết nối internet và thử lại, hoặc liên hệ qua email/điện thoại để được hỗ trợ.")
+                        
+                        # Show troubleshooting info
+                        if not sheets_success:
+                            st.error("🔧 Sự cố: Không thể lưu vào Google Sheets")
+                        if not webhook_success:
+                            st.error("🔧 Sự cố: Không thể gửi webhook đến n8n")
 
     # Raw data section
     # st.markdown("<h2 style='text-align: center;'>Dữ liệu thô</h2>", unsafe_allow_html=True)
