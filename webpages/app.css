@@ -1,0 +1,127 @@
+/* div[data-testid="stMetric"] p {
+    font-size: 1.3rem;
+    color: rgb(180, 92, 231);
+} */
+
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(5) > div:nth-child(1) {
+    border: 1px solid #f9a4a4; 
+    padding-bottom: 0px;       
+} */
+
+/* LINE 1 - LEFT */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) {
+    background-color: rgba(113, 207, 221, 0.3); 
+    padding: 0 0px 5px 10px;            
+    border-radius: 10px;       
+    margin: 10px 0 10px 5px;       
+    border: 1px solid #cccccc;
+}
+
+/* LINE 1 - RIGHT */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(3) {
+    background-color: rgba(201, 76, 76, 0.3); 
+    padding: 0 10px 5px 10px;            
+    border-radius: 10px;      
+    margin: 10px 5px 10px 0;       
+    /* border: 1px solid #cccccc;  */
+}
+
+/* SEPARATE LINE 1 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > hr {
+    /* border: 1px solid #aaaaaa;  */
+    padding: 0 0 0 0;
+    margin: 10px 0 0 0;
+}
+
+/* LINE 1 - TITLE + INTRO */
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) {
+    border: 1px solid #ffffff; 
+} */
+
+/* SEPARATE LINE 2 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] >  div[data-testid="stElementContainer"]:nth-child(4) > div:nth-child(1) > div:nth-child(1) > hr{
+    border: 1px solid #ffffff; 
+    padding: 0 0 10px 0;
+    margin: 0 0 20px 0;
+}
+
+/* LINE 2 - BLOCK 2 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(5) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2){
+    background-color: #ffffff; 
+    padding: 0 10px 5px 10px;            
+    border-radius: 10px;      
+    margin: 0 0 10px 10px;       
+    border: 1px solid #ffffff; 
+}
+
+/* LINE 2 - BLOCK 1 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(5) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1){
+    height: 300px; 
+    overflow-y: auto;
+    background-color: #e3e6ed;    
+    border: 1px solid #cccccc; 
+    padding: 10px 10px 0px 10px;    
+    border-radius: 10px;     
+    margin-bottom: 10px;    
+}
+
+/* LINE 2 - BLOCK 1 - CHART --> NOT WORKING*/ 
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(5) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)  > div:nth-child(1) > canvas{
+    padding: 20px 0 0 0;  
+} */
+
+/* LINE 2 - SEPARATE LINE 3 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(5) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-of-type(2) > div:nth-child(1) > div:nth-child(1) > hr{
+    border: 1px dashed #f9a4a4; 
+    padding: 0 0 0 0;
+    margin: 0 0 20px 0; 
+}
+
+/* LINE 3 */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(6) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) {
+    padding-bottom: 0;            
+    margin-bottom: 0;       
+    /* border: 1px solid #f9a4a4;  */
+}
+
+/* LINE 3 - LEFT - BLOCK 1*/
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) {
+    /* border: 1px solid #f9a4a4; */
+    border-radius: 10px;     
+}
+
+/* LINE 3 - LEFT - SEPARATE LINE*/
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {
+    /* border: 1px solid #f9a4a4; */
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+
+/* LINE 3 - LEFT - BLOCK 2*/
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {
+    /* border: 1px solid #f9a4a4; */
+    padding: 10px;
+    margin: 0 0 0 0;
+    background-color: #e3e6ed;    
+    border: 1px solid #cccccc; 
+    border-radius: 10px;  
+}
+
+/* LINE 3 - RIGHT - BLOCK 1 - BUTTON*/
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) > div[data-testid="stVerticalBlockBorderWrapper"] > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"]:nth-child(1) > div:nth-child(3) {
+    /* border: 1px solid #f9a4a4; */
+    padding-top: 28px;
+    padding-bottom: 20px;
+}
+
+/* LINE 3 - RIGHT - BLOCK 2 SCORECARD*/
+
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) > div[data-testid="stVerticalBlockBorderWrapper"] > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"]:nth-child(2) {
+    text-align: center;
+}
+
+/* LINE 3 - RIGHT - BLOCK 2 SCORECARD - TEXT*/
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(7) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) > div[data-testid="stVerticalBlockBorderWrapper"] > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"]:nth-child(2) p {
+    font-size: 1.3rem;
+    text-align: center;
+}

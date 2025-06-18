@@ -1,0 +1,4 @@
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(8){
+    /* border: 1px solid #f9a4a4; */
+    background-color: #bcdabb;
+}

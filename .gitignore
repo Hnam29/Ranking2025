@@ -1,0 +1,59 @@
+# Environment variables and sensitive files
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# SSL certificates
+*.pem
+*.crt
+*.key
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Credentials and config files
+credentials.json
+config.json
+
+# Large data files (exclude from Git)
+*.csv
+*.xlsx
+*.xls
+merged_data.csv
+android.csv
+ios.csv
+app_review_analysed.xlsx
+
+# Large logo directories (too many files)
+logos_app/
+logos_web/
+logo_processed_web/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Large notebook files
+*.ipynb

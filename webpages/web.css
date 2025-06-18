@@ -1,0 +1,57 @@
+/* (NOT SOLVED) ADDRESS THE SPACE BETWEEN NAVIGATION BAR AND TITLE */
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1)  > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) {
+    border: 1px solid #f9a4a4;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+} */
+
+/* LINE 1 - ALL */
+
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) {
+    /* background-color: #e9ecf1; 
+    padding: 0 0 0px 10px;            
+    border-radius: 10px;      
+    border: 1px solid #f9a4a4; */
+    margin-bottom: 30px;
+}
+
+/* LINE 1 - LEFT */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(1) {
+    background-color: rgba(113, 207, 221, 0.3); 
+    padding: 0 0px 5px 10px;            
+    border-radius: 10px;       
+    margin: 10px 0 10px 5px;       
+    border: 1px solid #cccccc;
+}
+
+/* LINE 1 - MIDDLE */
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) {
+    padding: 0 0 0 0;            
+    margin: 0 0 0 0;       
+} */
+
+/* LINE 1 - RIGHT */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(3) {
+    background-color: rgba(201, 76, 76, 0.3); 
+    padding: 0 10px 5px 10px;            
+    border-radius: 10px;      
+    margin: 10px 5px 10px 0;       
+    /* border: 1px solid #cccccc;  */
+}
+
+/* LINE 2 - ALL */
+/* div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(5) {
+    background-color: #e9ecf1; 
+    padding: 0 0 0px 10px;            
+    border-radius: 10px;      
+    border: 1px solid #050404;
+} */
+
+/* LINE 3 - RIGHT */
+div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(6) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3){
+    /* border: 1px solid #f9a4a4; */
+    overflow-x: auto;
+    white-space: nowrap;
+}
