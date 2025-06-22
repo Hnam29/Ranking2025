@@ -501,42 +501,60 @@ def main_ranking():
                 st.warning("⚠️ K12 table data not available")
 
         with table_col2:
-
-            data_df_he = data_df[data_df['Segment'] == 'HE']
-            # Use data_editor with ImageColumn
-            st.data_editor(
-                data_df_he[['edtech_name', 'logo_base64']],
-                column_config={
-                    "logo_base64": st.column_config.ImageColumn("HE",width='medium')
-                },
-                hide_index=True,
-                key='HE'
-            )
+            # Check if data is available for HE segment
+            if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
+                data_df_he = data_df[data_df['Segment'] == 'HE']
+                if not data_df_he.empty:
+                    # Use data_editor with ImageColumn
+                    st.data_editor(
+                        data_df_he[['edtech_name', 'logo_base64']],
+                        column_config={
+                            "logo_base64": st.column_config.ImageColumn("HE",width='medium')
+                        },
+                        hide_index=True,
+                        key='HE'
+                    )
+                else:
+                    st.info("No HE data available")
+            else:
+                st.warning("⚠️ HE table data not available")
 
         with table_col3:
-
-            data_df_kd = data_df[data_df['Segment'] == 'Mầm non']
-            # Use data_editor with ImageColumn
-            st.data_editor(
-                data_df_kd[['edtech_name', 'logo_base64']],
-                column_config={
-                    "logo_base64": st.column_config.ImageColumn("Mầm non",width='medium')
-                },
-                hide_index=True,
-                key='Kindy'
-            )
+            # Check if data is available for Mầm non segment
+            if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
+                data_df_kd = data_df[data_df['Segment'] == 'Mầm non']
+                if not data_df_kd.empty:
+                    # Use data_editor with ImageColumn
+                    st.data_editor(
+                        data_df_kd[['edtech_name', 'logo_base64']],
+                        column_config={
+                            "logo_base64": st.column_config.ImageColumn("Mầm non",width='medium')
+                        },
+                        hide_index=True,
+                        key='Kindy'
+                    )
+                else:
+                    st.info("No Mầm non data available")
+            else:
+                st.warning("⚠️ Mầm non table data not available")
 
         with table_col4:
-
-            data_df_wk = data_df[data_df['Segment'] == 'Đi làm']
-            # Use data_editor with ImageColumn
-            st.data_editor(
-                data_df_wk[['edtech_name', 'logo_base64']],
-                column_config={
-                    "logo_base64": st.column_config.ImageColumn("Đi làm",width='medium')
-                },
-                hide_index=True,
-                key='Working'
-            )
+            # Check if data is available for Đi làm segment
+            if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
+                data_df_wk = data_df[data_df['Segment'] == 'Đi làm']
+                if not data_df_wk.empty:
+                    # Use data_editor with ImageColumn
+                    st.data_editor(
+                        data_df_wk[['edtech_name', 'logo_base64']],
+                        column_config={
+                            "logo_base64": st.column_config.ImageColumn("Đi làm",width='medium')
+                        },
+                        hide_index=True,
+                        key='Working'
+                    )
+                else:
+                    st.info("No Đi làm data available")
+            else:
+                st.warning("⚠️ Đi làm table data not available")
 
     # footer()
