@@ -100,49 +100,79 @@
 # File: extract_data_from_db.py
 
 import pandas as pd
-from sqlalchemy import create_engine, text # Added 'text' for parameter binding if needed later
-from sqlalchemy.exc import SQLAlchemyError
-import urllib.parse
-import sys # To potentially exit if engine creation fails
-import pymysql
 import os
-from dotenv import load_dotenv
+import sys
+
+# Try to import database dependencies
+try:
+    from sqlalchemy import create_engine, text
+    from sqlalchemy.exc import SQLAlchemyError
+    import urllib.parse
+    import pymysql
+    from dotenv import load_dotenv
+    DB_DEPENDENCIES_AVAILABLE = True
+except ImportError as e:
+    print(f"Database dependencies not available: {e}")
+    DB_DEPENDENCIES_AVAILABLE = False
 
 print("Initializing database module...") # See when this runs
 
-# Load environment variables from .env file
-load_dotenv()
+if DB_DEPENDENCIES_AVAILABLE:
+    # Load environment variables from .env file
+    load_dotenv()
 
-# --- Database Configuration ---
-# Using environment variables for security
-db_config = {
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'host': os.getenv('DB_HOST'),
-    'database': os.getenv('DB_DATABASE'),
-    'port': int(os.getenv('DB_PORT', 3306))  # Default to 3306 if not specified
-}
+    # --- Database Configuration ---
+    # Using environment variables for security
+    db_config = {
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'host': os.getenv('DB_HOST'),
+        'database': os.getenv('DB_DATABASE'),
+        'port': int(os.getenv('DB_PORT', 3306))  # Default to 3306 if not specified
+    }
+
+    # Check if all required environment variables are present
+    if not all(db_config.values()):
+        print("Warning: Some database environment variables are missing.")
+        print("Available config:", {k: v for k, v in db_config.items() if v})
+        DB_DEPENDENCIES_AVAILABLE = False
+else:
+    db_config = {}
 
 # --- Engine Creation Helper ---
 def _get_configured_engine(config): # Made 'private' by convention with _
     """Helper to create the engine."""
+    if not DB_DEPENDENCIES_AVAILABLE:
+        print("Database dependencies not available. Cannot create engine.")
+        return None
+
     required_keys = ['user', 'password', 'host', 'port', 'database']
     if not all(key in config for key in required_keys):
         print(f"Error: db_config is missing one or more keys: {required_keys}")
         return None
+
+    # Check for None values
+    if not all(config.get(key) for key in required_keys):
+        print(f"Error: Some database configuration values are None or empty")
+        return None
+
     try:
         encoded_password = urllib.parse.quote_plus(config['password'])
         # Using PyMySQL driver (recommended)
-        ssl_ca_path = os.getenv('SSL_CA_PATH', '/Users/vuhainam/Downloads/ca.pem')  # Use env var or fallback
-        ssl_ca_path = os.path.abspath(ssl_ca_path)
+        ssl_ca_path = os.getenv('SSL_CA_PATH', '')
 
+        # Build connection string
         conn_str = (
             f"mysql+pymysql://"
             f"{config['user']}:{encoded_password}"
             f"@{config['host']}:{config['port']}"
             f"/{config['database']}"
-            f"?charset=utf8mb4&ssl_ca={ssl_ca_path}" # add to use mysql database hosted by aiven
+            f"?charset=utf8mb4"
         )
+
+        # Add SSL if path is provided
+        if ssl_ca_path and os.path.exists(ssl_ca_path):
+            conn_str += f"&ssl_ca={ssl_ca_path}"
 
         eng = create_engine(conn_str, pool_recycle=3600) # pool_recycle helps with long-running apps
         # Test connection on creation
@@ -150,18 +180,19 @@ def _get_configured_engine(config): # Made 'private' by convention with _
             print(f"Database engine connection successful to '{config['database']}'.")
         return eng
     except Exception as e:
-        print(f"FATAL: Error creating database engine: {e}")
+        print(f"Error creating database engine: {e}")
         return None
 
 # --- Create Engine ONCE when module is imported ---
-engine = _get_configured_engine(db_config)
+if DB_DEPENDENCIES_AVAILABLE:
+    engine = _get_configured_engine(db_config)
+else:
+    engine = None
 
-# Exit script/module loading if engine creation failed critically
+# Handle engine creation failure gracefully
 if engine is None:
-    print("Failed to initialize database engine. Exiting module setup.")
-    # Depending on usage, you might raise an exception or handle this differently
-    # For simplicity here, functions below will just check if engine is None.
-    # sys.exit("Database connection could not be established.") # Use this for critical failure
+    print("Database engine not available. Database functions will return None.")
+    # Don't exit - just continue with limited functionality
 
 # --- Main Function to Export ---
 def execute_sql_to_dataframe(sql_query: str, params=None):
@@ -181,9 +212,9 @@ def execute_sql_to_dataframe(sql_query: str, params=None):
                           Returns None if the engine is invalid or an error occurs.
     """
     global engine # Access the engine created when the module was loaded
-    if engine is None:
-        print("Error: Database engine is not available (initialization failed?).")
-        return None
+    if not DB_DEPENDENCIES_AVAILABLE or engine is None:
+        print("Warning: Database engine is not available. Returning empty DataFrame.")
+        return pd.DataFrame()  # Return empty DataFrame instead of None
 
     print("-" * 30)
     print(f"Executing SQL query:")
@@ -203,10 +234,10 @@ def execute_sql_to_dataframe(sql_query: str, params=None):
 
     except SQLAlchemyError as db_err:
         print(f"SQLAlchemy Database Error executing query: {db_err}")
-        return None
+        return pd.DataFrame()  # Return empty DataFrame instead of None
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return None
+        return pd.DataFrame()  # Return empty DataFrame instead of None
 
 # --- Optional: Add other database-related functions here ---
 def execute_sql_ddl(sql_query: str, params=None):
@@ -224,8 +255,8 @@ def execute_sql_ddl(sql_query: str, params=None):
         bool: True nếu thực thi thành công, False nếu có lỗi.
     """
     global engine  # Truy cập engine đã được tạo khi module được load
-    if engine is None:
-        print("Lỗi: Database engine không khả dụng (khởi tạo thất bại?).")
+    if not DB_DEPENDENCIES_AVAILABLE or engine is None:
+        print("Warning: Database engine không khả dụng. DDL command skipped.")
         return False
 
     print("-" * 30)
@@ -240,16 +271,16 @@ def execute_sql_ddl(sql_query: str, params=None):
         with engine.connect() as connection:
             # Sử dụng text() để truyền tham số an toàn
             stmt = text(sql_query)
-            
+
             # Thực thi câu lệnh
             if params:
                 connection.execute(stmt, params)
             else:
                 connection.execute(stmt)
-                
+
             # Commit để đảm bảo các thay đổi được lưu lại
             connection.commit()
-            
+
         print(f"Câu lệnh đã được thực thi thành công.")
         return True
 

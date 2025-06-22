@@ -19,16 +19,38 @@ st.set_page_config(
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 
-# Import modules with error handling
-try:
-    from webpages.app import main_app
-    from webpages.web import main_web
-    from webpages.ranking import main_ranking
-    from webpages.feedback import main_feedback
-except ImportError as e:
-    st.error(f"Import error: {e}")
-    st.error("Please ensure all required files are present in the webpages directory.")
-    st.stop()
+# Define functions to load modules dynamically
+def load_app_module():
+    try:
+        from webpages.app import main_app
+        return main_app
+    except ImportError as e:
+        st.error(f"Failed to load App Analysis: {e}")
+        return None
+
+def load_web_module():
+    try:
+        from webpages.web import main_web
+        return main_web
+    except ImportError as e:
+        st.error(f"Failed to load Website Analysis: {e}")
+        return None
+
+def load_ranking_module():
+    try:
+        from webpages.ranking import main_ranking
+        return main_ranking
+    except ImportError as e:
+        st.error(f"Failed to load Rankings: {e}")
+        return None
+
+def load_feedback_module():
+    try:
+        from webpages.feedback import main_feedback
+        return main_feedback
+    except ImportError as e:
+        st.error(f"Failed to load Feedback: {e}")
+        return None
 
 def main():
     """Main application function with navigation"""
@@ -48,28 +70,36 @@ def main():
     if page == "🏠 Home":
         show_home_page()
     elif page == "📱 App Analysis":
-        try:
-            main_app()
-        except Exception as e:
-            st.error(f"Error loading App Analysis: {e}")
-            st.info("Please check your database connection and try again.")
+        main_app = load_app_module()
+        if main_app is not None:
+            try:
+                main_app()
+            except Exception as e:
+                st.error(f"Error running App Analysis: {e}")
+                st.info("Please check your database connection and try again.")
     elif page == "🌐 Website Analysis":
-        try:
-            main_web()
-        except Exception as e:
-            st.error(f"Error loading Website Analysis: {e}")
-            st.info("Please check your database connection and try again.")
+        main_web = load_web_module()
+        if main_web is not None:
+            try:
+                main_web()
+            except Exception as e:
+                st.error(f"Error running Website Analysis: {e}")
+                st.info("Please check your database connection and try again.")
     elif page == "📊 Rankings":
-        try:
-            main_ranking()
-        except Exception as e:
-            st.error(f"Error loading Rankings: {e}")
-            st.info("Please check your database connection and try again.")
+        main_ranking = load_ranking_module()
+        if main_ranking is not None:
+            try:
+                main_ranking()
+            except Exception as e:
+                st.error(f"Error running Rankings: {e}")
+                st.info("Please check your database connection and try again.")
     elif page == "💬 Feedback":
-        try:
-            main_feedback()
-        except Exception as e:
-            st.error(f"Error loading Feedback: {e}")
+        main_feedback = load_feedback_module()
+        if main_feedback is not None:
+            try:
+                main_feedback()
+            except Exception as e:
+                st.error(f"Error running Feedback: {e}")
     
     # Footer
     st.sidebar.markdown("---")
