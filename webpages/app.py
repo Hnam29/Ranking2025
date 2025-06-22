@@ -2,13 +2,29 @@ import streamlit as st
 import pandas as pd
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.metric_cards import style_metric_cards
-from webpages.footer import footer
-from get_data_from_db import execute_sql_to_dataframe, execute_sql_ddl
+try:
+    from webpages.footer import footer
+    from get_data_from_db import execute_sql_to_dataframe, execute_sql_ddl
+except ImportError:
+    # For cloud deployment, adjust import paths
+    from footer import footer
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from get_data_from_db import execute_sql_to_dataframe, execute_sql_ddl
 
 def main_app():
 
-    with open('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/RANKING/2025/webpages/app.css')as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+    import os
+    # Get the directory of the current file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    css_path = os.path.join(current_dir, 'app.css')
+
+    try:
+        with open(css_path, 'r') as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning("CSS file not found. Using default styling.")
 
     # sql_query = f"""
     #     SHOW COLUMNS FROM fact_ranking_app_review
@@ -50,7 +66,11 @@ def main_app():
                 data = f.read()
             return base64.b64encode(data).decode()
         
-        img = get_img_as_base64('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/webpages/bg.jpeg')
+        bg_image_path = os.path.join(current_dir, 'bg.jpeg')
+        try:
+            img = get_img_as_base64(bg_image_path)
+        except FileNotFoundError:
+            img = ""  # Use empty string if background image not found
         page_bg_img = f"""
         <style>
             div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {{
@@ -458,7 +478,22 @@ def main_app():
                 return ' '.join(cleaned)
 
             def generate_wordcloud(text):
-                wordcloud = WordCloud(width=800, height=400, background_color='white', font_path='/System/Library/Fonts/Product Sans Bold Italic.otf').generate(text)
+                # Try to use a system font, fallback to default if not available
+                try:
+                    wordcloud = WordCloud(
+                        width=800,
+                        height=400,
+                        background_color='white',
+                        font_path='/System/Library/Fonts/Arial.ttf'  # More common font
+                    ).generate(text)
+                except:
+                    # Fallback to default font if system font not available
+                    wordcloud = WordCloud(
+                        width=800,
+                        height=400,
+                        background_color='white'
+                    ).generate(text)
+
                 fig, ax = plt.subplots(figsize=(10, 5))
                 ax.imshow(wordcloud, interpolation='bilinear')
                 ax.axis('off')
