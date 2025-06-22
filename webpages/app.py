@@ -332,11 +332,6 @@ def main_app():
                 data4['total_score'] = data4['app_popularity'] + data4['user_sentiment']
 
                 sorted_data = data4.sort_values('total_score', ascending=False)
-            else:
-                st.warning("⚠️ Ranking data not available. Please check your database connection.")
-                # Create empty data to prevent errors
-                data4 = pd.DataFrame()
-                sorted_data = pd.DataFrame()
 
                 # Bước 2: Tạo dữ liệu dạng dài (melted) với thứ tự đã được sắp xếp
                 data_melted = sorted_data.melt(
@@ -353,6 +348,12 @@ def main_app():
                     # 'app_scalability': 2,
                     'user_sentiment': 2
                 })
+            else:
+                st.warning("⚠️ Ranking data not available. Please check your database connection.")
+                # Create empty data to prevent errors
+                data4 = pd.DataFrame()
+                sorted_data = pd.DataFrame()
+                data_melted = pd.DataFrame()
 
             # Bước 3: Tạo biểu đồ với nhãn giá trị và sắp xếp
             def create_horizontal_stacked_bar_chart(data_melted):
@@ -565,33 +566,37 @@ def main_app():
                 ax.axis('off')
                 return fig
 
-            # Fetch the data for word cloud
-            sql_word_cloud = f"""
-                SELECT d.`app name`, f.`content`
-                FROM fact_ranking_app_review f
-                INNER JOIN dim_ranking_app d
-                ON f.`app_id` = d.`app id`
-                WHERE d.`app name` = '{app_name}'
-            """
-            wordcloud_df = execute_sql_to_dataframe(sql_word_cloud)
+            # Only fetch wordcloud data if app_name is selected
+            if app_name:
+                # Fetch the data for word cloud
+                sql_word_cloud = f"""
+                    SELECT d.`app name`, f.`content`
+                    FROM fact_ranking_app_review f
+                    INNER JOIN dim_ranking_app d
+                    ON f.`app_id` = d.`app id`
+                    WHERE d.`app name` = '{app_name}'
+                """
+                wordcloud_df = execute_sql_to_dataframe(sql_word_cloud)
 
-            # Check if wordcloud data is available
-            if wordcloud_df is not None and not wordcloud_df.empty and 'content' in wordcloud_df.columns:
-                # st.subheader("📱 App Review Word Cloud")
+                # Check if wordcloud data is available
+                if wordcloud_df is not None and not wordcloud_df.empty and 'content' in wordcloud_df.columns:
+                    # st.subheader("📱 App Review Word Cloud")
 
-                # Filter & Clean
-                filtered_reviews = wordcloud_df[wordcloud_df['app name'] == app_name]['content'].dropna()
-                cleaned_reviews = filtered_reviews.apply(clean_text)
-                joined_text = " ".join(cleaned_reviews)
+                    # Filter & Clean
+                    filtered_reviews = wordcloud_df[wordcloud_df['app name'] == app_name]['content'].dropna()
+                    cleaned_reviews = filtered_reviews.apply(clean_text)
+                    joined_text = " ".join(cleaned_reviews)
 
-                if joined_text.strip():
-                    fig = generate_wordcloud(joined_text)
-                    if fig is not None:
-                        st.pyplot(fig)
+                    if joined_text.strip():
+                        fig = generate_wordcloud(joined_text)
+                        if fig is not None:
+                            st.pyplot(fig)
+                    else:
+                        st.write("No clean words found for this app.")
                 else:
-                    st.write("No clean words found for this app.")
+                    st.info("📝 No review data available for word cloud generation")
             else:
-                st.info("📝 No review data available for word cloud generation")
+                st.info("👆 Please select an app to view word cloud")
 
         #     if app_name is not None:
         #         # Fetch data from MySQL

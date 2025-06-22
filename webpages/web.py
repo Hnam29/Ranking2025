@@ -36,15 +36,24 @@ def main_web():
    except FileNotFoundError:
        st.warning("CSS file not found. Using default styling.")
 
+   # Initialize segment and category data with error handling
    sql_query = f"""
       SELECT DISTINCT segment as Segment FROM dim_ranking_web WHERE segment != ''
       """
    segment = execute_sql_to_dataframe(sql_query)
 
+   # Ensure segment is properly initialized
+   if segment is None or segment.empty:
+       segment = pd.DataFrame({'Segment': []})
+
    sql_query2 = f"""
       SELECT DISTINCT category as Category FROM dim_ranking_web WHERE category != ''
       """
    category = execute_sql_to_dataframe(sql_query2)
+
+   # Ensure category is properly initialized
+   if category is None or category.empty:
+       category = pd.DataFrame({'Category': []})
 
    # ddl_sql = """   
    # CREATE OR REPLACE VIEW view_transformed_grouped_criteria AS
@@ -235,13 +244,13 @@ def main_web():
       with filter_column:
          
          # Check if segment and category data are available
-         if 'segment' in locals() and segment is not None and not segment.empty and 'Segment' in segment.columns:
+         if segment is not None and not segment.empty and 'Segment' in segment.columns:
             selected_Segment = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter1')
          else:
             st.warning("⚠️ Segment data not available")
             selected_Segment = None
 
-         if 'category' in locals() and category is not None and not category.empty and 'Category' in category.columns:
+         if category is not None and not category.empty and 'Category' in category.columns:
             selected_Category = st.selectbox("Category", category['Category'],index=None,key='category_filter1')
          else:
             st.warning("⚠️ Category data not available")
@@ -470,13 +479,13 @@ def main_web():
          col1, col2 = st.columns([4,6])
          with col1:
             # Check if segment and category data are available
-            if 'segment' in locals() and segment is not None and not segment.empty and 'Segment' in segment.columns:
+            if segment is not None and not segment.empty and 'Segment' in segment.columns:
                segment_filter = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter2')
             else:
                st.warning("⚠️ Segment data not available")
                segment_filter = None
 
-            if 'category' in locals() and category is not None and not category.empty and 'Category' in category.columns:
+            if category is not None and not category.empty and 'Category' in category.columns:
                category_filter = st.selectbox("Category", category['Category'],index=None,key='category_filter2')
             else:
                st.warning("⚠️ Category data not available")
