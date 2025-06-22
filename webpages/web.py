@@ -234,8 +234,18 @@ def main_web():
          )
       with filter_column:
          
-         selected_Segment = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter1')
-         selected_Category = st.selectbox("Category", category['Category'],index=None,key='category_filter1')
+         # Check if segment and category data are available
+         if 'segment' in locals() and segment is not None and not segment.empty and 'Segment' in segment.columns:
+            selected_Segment = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter1')
+         else:
+            st.warning("⚠️ Segment data not available")
+            selected_Segment = None
+
+         if 'category' in locals() and category is not None and not category.empty and 'Category' in category.columns:
+            selected_Category = st.selectbox("Category", category['Category'],index=None,key='category_filter1')
+         else:
+            st.warning("⚠️ Category data not available")
+            selected_Category = None
 
          # Display messages based on user selection
          if selected_Segment and selected_Category:
@@ -266,7 +276,13 @@ def main_web():
             AND COLUMN_NAME NOT IN ('`web url`');
          """
          metric2= execute_sql_to_dataframe(sql2)
-         selections = st.multiselect('Choose criteria', metric2['criteria'].tolist(), placeholder= 'Max 4 selections', max_selections=4)
+
+         # Check if criteria data is available
+         if metric2 is not None and not metric2.empty and 'criteria' in metric2.columns:
+            selections = st.multiselect('Choose criteria', metric2['criteria'].tolist(), placeholder= 'Max 4 selections', max_selections=4)
+         else:
+            st.warning("⚠️ Criteria data not available")
+            selections = []
 
          # SQL to fetch average values for selected columns
          if selections:
@@ -280,23 +296,27 @@ def main_web():
             """
             df_metrics = execute_sql_to_dataframe(sql3)
 
-            # Fill metrics safely
-            col1, col2, col3, col4 = st.columns(4)
+            # Check if metrics data is available
+            if df_metrics is not None and not df_metrics.empty:
+               # Fill metrics safely
+               col1, col2, col3, col4 = st.columns(4)
 
-            if len(selections) >= 1:
-               val1 = round(df_metrics[selections[0]][0], 2)
-               col1.metric(label=f"{selections[0]}", value=val1)
-            if len(selections) >= 2:
-               val2 = round(df_metrics[selections[1]][0], 2)
-               col2.metric(label=f"{selections[1]}", value=val2)
+               if len(selections) >= 1 and selections[0] in df_metrics.columns:
+                  val1 = round(df_metrics[selections[0]][0], 2)
+                  col1.metric(label=f"{selections[0]}", value=val1)
+               if len(selections) >= 2 and selections[1] in df_metrics.columns:
+                  val2 = round(df_metrics[selections[1]][0], 2)
+                  col2.metric(label=f"{selections[1]}", value=val2)
 
-            if len(selections) >= 3:
-               val3 = round(df_metrics[selections[2]][0], 2)
-               col3.metric(label=f"{selections[2]}", value=val3)
+               if len(selections) >= 3 and selections[2] in df_metrics.columns:
+                  val3 = round(df_metrics[selections[2]][0], 2)
+                  col3.metric(label=f"{selections[2]}", value=val3)
 
-            if len(selections) == 4:
-               val4 = round(df_metrics[selections[3]][0], 2)
-               col4.metric(label=f"{selections[3]}", value=val4)
+               if len(selections) == 4 and selections[3] in df_metrics.columns:
+                  val4 = round(df_metrics[selections[3]][0], 2)
+                  col4.metric(label=f"{selections[3]}", value=val4)
+            else:
+               st.warning("⚠️ Metrics data not available")
 
             style_metric_cards(border_left_color="#DBF227")
       
@@ -449,8 +469,18 @@ def main_web():
       with filter2_column:
          col1, col2 = st.columns([4,6])
          with col1:
-            segment_filter = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter2')
-            category_filter = st.selectbox("Category", category['Category'],index=None,key='category_filter2')
+            # Check if segment and category data are available
+            if 'segment' in locals() and segment is not None and not segment.empty and 'Segment' in segment.columns:
+               segment_filter = st.selectbox("Segment", segment['Segment'],index=None,key='segment_filter2')
+            else:
+               st.warning("⚠️ Segment data not available")
+               segment_filter = None
+
+            if 'category' in locals() and category is not None and not category.empty and 'Category' in category.columns:
+               category_filter = st.selectbox("Category", category['Category'],index=None,key='category_filter2')
+            else:
+               st.warning("⚠️ Category data not available")
+               category_filter = None
 
          with col2:
             # Base query
@@ -474,8 +504,13 @@ def main_web():
             # Execute query
             data = execute_sql_to_dataframe(sql)
 
-            # Streamlit UI for selection
-            selected_web = st.multiselect("Select website(s) for analysis", data['edtech_name'], max_selections=2)
+            # Check if data is available for website selection
+            if data is not None and not data.empty and 'edtech_name' in data.columns:
+               # Streamlit UI for selection
+               selected_web = st.multiselect("Select website(s) for analysis", data['edtech_name'], max_selections=2)
+            else:
+               st.warning("⚠️ No websites available for selection")
+               selected_web = []
 
       with separate_line:
          if len(selected_web) == 1:
@@ -545,21 +580,26 @@ def main_web():
          data = execute_sql_to_dataframe(sql)
 
          sql_avg = """
-            SELECT 
+            SELECT
                   AVG(`website speed`) AS avg_website_speed,
                   AVG(`website authority`) AS avg_website_authority,
                   AVG(`website security`) AS avg_website_security,
                   AVG(`accessibility compliance`) AS avg_accessibility,
                   AVG(`navigation & readability`) AS avg_readability
-            FROM fact_ranking_web 
+            FROM fact_ranking_web
          """
          data_avg = execute_sql_to_dataframe(sql_avg)
 
-         # Extract average values
-         avg = data_avg.iloc[0]
+         # Check if average data is available
+         if data_avg is not None and not data_avg.empty:
+            # Extract average values
+            avg = data_avg.iloc[0]
+         else:
+            st.warning("⚠️ Average data not available")
+            avg = None
 
-         # Make sure we have 2 selected websites
-         if len(selected_web) == 2:
+         # Make sure we have 2 selected websites and data is available
+         if len(selected_web) == 2 and data is not None and not data.empty and avg is not None:
             # Prepare columns
             col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -567,7 +607,7 @@ def main_web():
                notes = []  # Track missing fields for this edtech_name
 
                # Website Speed
-               if pd.notna(row['website_speed']):
+               if pd.notna(row['website_speed']) and 'avg_website_speed' in avg:
                      col1.metric(
                         label=f"Speed: {row['edtech_name']}",
                         value=row['website_speed'],
@@ -629,54 +669,70 @@ def main_web():
                      fact_ranking_web.`website authority` AS website_authority,
                      fact_ranking_web.`accessibility compliance` AS accessibility,
                      fact_ranking_web.`navigation & readability` AS readability
-            FROM fact_ranking_web 
+            FROM fact_ranking_web
             INNER JOIN dim_ranking_web
             ON fact_ranking_web.`web url` = dim_ranking_web.`web url`
             """
             data2 = execute_sql_to_dataframe(sql2)
-            df = data2.copy()
-            selected_name = selected_web[0]
-            selected_web_name = df[df["edtech_name"] == selected_name].iloc[0]
-            metrics = df.columns[1:]
-            max_values = df[metrics].max()
 
-            # Normalize selected app
-            normalized_values = selected_web_name[metrics] / max_values
+            # Check if radar chart data is available
+            if data2 is not None and not data2.empty and 'edtech_name' in data2.columns:
+               df = data2.copy()
+               selected_name = selected_web[0]
 
-            import plotly.graph_objects as go
-            # Create radar chart
-            fig = go.Figure()
+               # Check if selected website exists in data
+               if selected_name in df['edtech_name'].values:
+                  selected_web_name = df[df["edtech_name"] == selected_name].iloc[0]
+                  metrics = df.columns[1:]
+                  max_values = df[metrics].max()
 
-            fig.add_trace(go.Scatterpolar(
-                  r=normalized_values.tolist(),
-                  theta=metrics.tolist(),
-                  fill='toself',
-                  name=selected_name,
-                  line=dict(color='blue')
-            ))
+                  # Normalize selected app
+                  normalized_values = selected_web_name[metrics] / max_values
+               else:
+                  st.warning(f"⚠️ Data not found for {selected_name}")
+                  normalized_values = None
+            else:
+               st.warning("⚠️ Radar chart data not available")
+               normalized_values = None
 
-            fig.add_trace(go.Scatterpolar(
-                  r=[1] * len(metrics),
-                  theta=metrics.tolist(),
-                  fill='toself',
-                  name='Max Values',
-                  line=dict(color='gray', dash='dash')
-            ))
-            selected_web_value = selected_web[0]
-            fig.update_layout(
-                  polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
-                  showlegend=True,
-                  title=f"Comparison between {selected_web_value} with Market Benchmark"
-            )
+            # Only create radar chart if data is available
+            if normalized_values is not None:
+               import plotly.graph_objects as go
+               # Create radar chart
+               fig = go.Figure()
 
-            fig.update_layout(
-                  height=300,  # Increase height
-                  width=500,   # Increase width
-                  margin=dict(l=0, r=850, t=100, b=0)  
-            )
+               fig.add_trace(go.Scatterpolar(
+                     r=normalized_values.tolist(),
+                     theta=metrics.tolist(),
+                     fill='toself',
+                     name=selected_name,
+                     line=dict(color='blue')
+               ))
 
-            # Display chart
-            st.plotly_chart(fig)
+               fig.add_trace(go.Scatterpolar(
+                     r=[1] * len(metrics),
+                     theta=metrics.tolist(),
+                     fill='toself',
+                     name='Max Values',
+                     line=dict(color='gray', dash='dash')
+               ))
+               selected_web_value = selected_web[0]
+               fig.update_layout(
+                     polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+                     showlegend=True,
+                     title=f"Comparison between {selected_web_value} with Market Benchmark"
+               )
+
+               fig.update_layout(
+                     height=300,  # Increase height
+                     width=500,   # Increase width
+                     margin=dict(l=0, r=850, t=100, b=0)
+               )
+
+               # Display chart
+               st.plotly_chart(fig)
+            else:
+               st.info("📊 Radar chart data not available")
 
          else:
             st.info("Please select 1 web to analyze or 2 websites to compare.")
