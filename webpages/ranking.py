@@ -2,13 +2,34 @@ import streamlit as st
 import pandas as pd
 from streamlit_extras.metric_cards import style_metric_cards
 import altair as alt
-from webpages.footer import footer
 import sys
-from get_data_from_db import execute_sql_to_dataframe
+import os
+
+# Try to import modules with error handling
+try:
+    from webpages.footer import footer
+    from get_data_from_db import execute_sql_to_dataframe
+except ImportError:
+    try:
+        from footer import footer
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from get_data_from_db import execute_sql_to_dataframe
+    except ImportError:
+        def footer():
+            st.markdown("---")
+            st.markdown("**EdTech Ranking 2025**")
+        execute_sql_to_dataframe = None
 
 def main_ranking():
-    with open('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/RANKING/2025/webpages/ranking.css')as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+    # Load CSS file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    css_path = os.path.join(current_dir, 'ranking.css')
+
+    try:
+        with open(css_path, 'r') as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning("CSS file not found. Using default styling.")
 
     # st.markdown("""
     #         <style>
@@ -37,7 +58,11 @@ def main_ranking():
             data = f.read()
         return base64.b64encode(data).decode()
     
-    img = get_img_as_base64('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/webpages/bg.jpeg')
+    bg_image_path = os.path.join(current_dir, 'bg.jpeg')
+    try:
+        img = get_img_as_base64(bg_image_path)
+    except FileNotFoundError:
+        img = ""  # Use empty string if background image not found
     page_bg_img = f"""
     <style>
         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1){{
@@ -350,7 +375,13 @@ def main_ranking():
                 suffix = Path(path).suffix.lower().replace('.', '')  # e.g., 'png'
                 return f"data:image/{suffix};base64,{b64_string}"
 
-        data_df = pd.read_excel('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/web_logo_mapping_update.xlsx')
+        # Try to load Excel file with logo mappings
+        excel_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'web_logo_mapping_update.xlsx')
+        try:
+            data_df = pd.read_excel(excel_path)
+        except FileNotFoundError:
+            st.warning("Logo mapping file not found. Using default display.")
+            data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Convert local paths to base64 strings
         data_df['logo_base64'] = data_df['logo_path'].apply(image_to_base64)

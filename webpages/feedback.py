@@ -1,26 +1,62 @@
 import streamlit as st
-from webpages.footer import footer
-import gspread
-from google.oauth2.service_account import Credentials
 import pandas as pd
 import json
 from datetime import datetime
 import uuid
+import os
+
+# Try to import Google Sheets dependencies
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    GSPREAD_AVAILABLE = True
+except ImportError:
+    GSPREAD_AVAILABLE = False
+    st.warning("Google Sheets integration not available. Feedback will be displayed only.")
+
+# Try to import footer
+try:
+    from webpages.footer import footer
+except ImportError:
+    try:
+        from footer import footer
+    except ImportError:
+        def footer():
+            st.markdown("---")
+            st.markdown("**EdTech Ranking 2025** - Feedback System")
 
 # Google Sheets setup for saving feedback
 @st.cache_resource
 def init_feedback_sheets():
     """Initialize Google Sheets connection for feedback saving"""
+    if not GSPREAD_AVAILABLE:
+        return None
+
     try:
-        SERVICE_ACCOUNT_FILE = '/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/Criteria-Scrapers/credentials.json'
-        SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-        
-        credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        # Try to get credentials from Streamlit secrets first
+        if "gcp_service_account" in st.secrets:
+            credentials = Credentials.from_service_account_info(
+                st.secrets["gcp_service_account"],
+                scopes=['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+            )
+        else:
+            # Fallback to local file (for development)
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            SERVICE_ACCOUNT_FILE = os.path.join(current_dir, 'Criteria-Scrapers', 'credentials.json')
+
+            if not os.path.exists(SERVICE_ACCOUNT_FILE):
+                st.info("Google Sheets credentials not found. Feedback saving disabled.")
+                return None
+
+            credentials = Credentials.from_service_account_file(
+                SERVICE_ACCOUNT_FILE,
+                scopes=['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+            )
+
         client = gspread.authorize(credentials)
-        
         return client
     except Exception as e:
-        st.error(f"Error initializing feedback sheets: {e}")
+        st.info(f"Google Sheets not available: {e}")
         return None
 
 def save_feedback_to_sheets(data, spreadsheet_id="15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"):
@@ -77,9 +113,15 @@ def validate_required_fields(data, required_fields):
     return missing_fields
 
 def main_feedback():
+    # Load CSS file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    css_path = os.path.join(current_dir, 'feedback.css')
 
-    with open('/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/RANKING/2025/webpages/feedback.css')as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+    try:
+        with open(css_path, 'r') as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning("CSS file not found. Using default styling.")
 
     # st.markdown("<h2 style='text-align: center; margin-bottom: 20px; background-image: linear-gradient(to right, #96d9a4, #c23640); color:#061c04;'>"
     #                 "Want to join the ranking system?</h2>", unsafe_allow_html=True) 
@@ -348,12 +390,34 @@ def main_feedback():
         time.sleep(3)  # Reduced loading time
 
     # Google Sheets connection for raw data
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    SERVICE_ACCOUNT_FILE = '/Users/vuhainam/Documents/PROJECT_DA/EdtechAgency/Ranking/2025/Criteria-Scrapers/credentials.json'
-    credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    gc = gspread.authorize(credentials)
-    spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
-    spreadsheet = gc.open_by_url(spreadsheet_url)
+    if GSPREAD_AVAILABLE:
+        try:
+            # Try to get credentials from Streamlit secrets first
+            if "gcp_service_account" in st.secrets:
+                credentials = Credentials.from_service_account_info(
+                    st.secrets["gcp_service_account"],
+                    scopes=['https://www.googleapis.com/auth/spreadsheets']
+                )
+            else:
+                # Fallback to local file (for development)
+                current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                SERVICE_ACCOUNT_FILE = os.path.join(current_dir, 'Criteria-Scrapers', 'credentials.json')
+
+                if not os.path.exists(SERVICE_ACCOUNT_FILE):
+                    st.error("Google Sheets credentials not found. Raw data display disabled.")
+                    return
+
+                credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=['https://www.googleapis.com/auth/spreadsheets'])
+
+            gc = gspread.authorize(credentials)
+            spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
+            spreadsheet = gc.open_by_url(spreadsheet_url)
+        except Exception as e:
+            st.error(f"Error connecting to Google Sheets: {e}")
+            return
+    else:
+        st.error("Google Sheets integration not available. Raw data display disabled.")
+        return
 
     sheet_name = st.radio('Select raw data sheet', ['WEB','APP'], horizontal=True)
     
