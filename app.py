@@ -108,7 +108,7 @@ def main():
 
 def show_home_page():
     """Display the home page"""
-    
+
     # Header
     st.markdown("""
         <div style='text-align: center; padding: 2rem 0;'>
@@ -120,6 +120,28 @@ def show_home_page():
             </h3>
         </div>
     """, unsafe_allow_html=True)
+
+    # Database connection status
+    st.markdown("### 🔗 System Status")
+
+    # Test database connection
+    try:
+        from get_data_from_db import execute_sql_to_dataframe
+        test_query = "SELECT 1 as test_connection"
+        test_result = execute_sql_to_dataframe(test_query)
+
+        if test_result is not None and not test_result.empty:
+            st.success("✅ Database connection: **Active**")
+            st.info("All features are available with live data from the database.")
+        else:
+            st.warning("⚠️ Database connection: **Limited**")
+            st.info("App is running in demo mode. Some features may show placeholder data.")
+    except Exception as e:
+        st.error("❌ Database connection: **Unavailable**")
+        st.info("App is running in offline mode. Features will show informational messages.")
+        st.expander("Technical Details").write(f"Error: {str(e)}")
+
+    st.markdown("---")
     
     # Main content
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -201,15 +223,47 @@ def show_home_page():
     # Getting started
     st.markdown("---")
     st.markdown("### 🚀 Getting Started")
-    
+
     st.info("""
         **Ready to explore?** Use the navigation menu on the left to:
-        
+
         1. **📱 App Analysis** - Analyze mobile application performance and user sentiment
-        2. **🌐 Website Analysis** - Evaluate website quality and performance metrics  
+        2. **🌐 Website Analysis** - Evaluate website quality and performance metrics
         3. **📊 Rankings** - View comprehensive rankings and comparisons
         4. **💬 Feedback** - Share your thoughts and suggestions
     """)
+
+    # Configuration help
+    with st.expander("⚙️ Configuration Help (For Administrators)"):
+        st.markdown("""
+            ### Database Configuration
+
+            To enable full functionality, configure these secrets in Streamlit Cloud:
+
+            ```toml
+            # Database Configuration
+            DB_USER = "your_database_user"
+            DB_PASSWORD = "your_database_password"
+            DB_HOST = "your_database_host"
+            DB_DATABASE = "your_database_name"
+            DB_PORT = "3306"
+            SSL_CA_PATH = ""
+            ```
+
+            ### Features Available by Connection Status:
+
+            **✅ With Database Connection:**
+            - Live data analysis and rankings
+            - Real-time charts and metrics
+            - Interactive filtering and comparison
+            - Complete app and website analysis
+
+            **⚠️ Without Database Connection:**
+            - App structure and navigation
+            - Feature demonstrations
+            - Configuration guidance
+            - Informational content
+        """)
 
 if __name__ == "__main__":
     main()
