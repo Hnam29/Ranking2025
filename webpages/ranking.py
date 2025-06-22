@@ -189,10 +189,20 @@ def main_ranking():
             
             col1, col2 = st.columns(2)
             with col1:
-                segment_filter = st.selectbox("Select a segment", data['Segment'].tolist())
-            
+                # Check if segment data is available
+                if data is not None and not data.empty and 'Segment' in data.columns:
+                    segment_filter = st.selectbox("Select a segment", data['Segment'].tolist())
+                else:
+                    st.warning("⚠️ Segment data not available")
+                    segment_filter = None
+
             with col2:
-                category_filter = st.selectbox("Select a category", data2['Category'].tolist())
+                # Check if category data is available
+                if data2 is not None and not data2.empty and 'Category' in data2.columns:
+                    category_filter = st.selectbox("Select a category", data2['Category'].tolist())
+                else:
+                    st.warning("⚠️ Category data not available")
+                    category_filter = None
 
         with scorecard_column:
             sql_query = f"""
@@ -214,9 +224,16 @@ def main_ranking():
                 FROM fact_ranking_web
                 """
             data2 = execute_sql_to_dataframe(sql_query2)
-            data_for_metric = int(data['total_rows'])
-            data_for_metric2 = ...  # <--- FORMULA FOR METRIC 2
-            data_for_metric3 = ...  # <--- FORMULA FOR METRIC 3
+
+            # Check if metric data is available
+            if data is not None and not data.empty and 'total_rows' in data.columns:
+                data_for_metric = int(data['total_rows'])
+            else:
+                st.warning("⚠️ Metric data not available")
+                data_for_metric = 0
+
+            data_for_metric2 = 0  # Placeholder for metric 2
+            data_for_metric3 = 0  # Placeholder for metric 3
 
             col1, col2, col3 = st.columns(3)
 
@@ -339,26 +356,36 @@ def main_ranking():
                 """
                 
                 df = execute_sql_to_dataframe(sql_query)
-                
-                # Create donut chart
-                fig_px = px.pie(
-                    values=df['unique_visitor'],
-                    names=df[config['column']],
-                    title=f'{selection} Distribution',
-                    hole=0.4
-                )
-                
-                fig_px.update_traces(
-                    textposition='inside', 
-                    textinfo='percent+label', 
-                    pull=[0, 0, 0.1, 0, 0]
-                )
-                fig_px.update_layout(
-                    margin=dict(l=0, r=0, t=50, b=0),
-                    height=300  
-                )
-                
-                st.plotly_chart(fig_px, use_container_width=True)
+
+                # Check if donut chart data is available
+                if df is not None and not df.empty and 'unique_visitor' in df.columns and config['column'] in df.columns:
+                    # Create donut chart
+                    fig_px = px.pie(
+                        values=df['unique_visitor'],
+                        names=df[config['column']],
+                        title=f'{selection} Distribution',
+                        hole=0.4
+                    )
+
+                    fig_px.update_traces(
+                        textposition='inside',
+                        textinfo='percent+label',
+                        pull=[0, 0, 0.1, 0, 0]
+                    )
+                else:
+                    st.warning(f"⚠️ {selection} distribution data not available")
+                    fig_px = None
+
+                # Only display chart if data is available
+                if fig_px is not None:
+                    fig_px.update_layout(
+                        margin=dict(l=0, r=0, t=50, b=0),
+                        height=300
+                    )
+
+                    st.plotly_chart(fig_px, use_container_width=True)
+                else:
+                    st.info("📊 Distribution chart data not available")
 
         st.markdown("---")
 
@@ -383,8 +410,13 @@ def main_ranking():
             st.warning("Logo mapping file not found. Using default display.")
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
-        # Convert local paths to base64 strings
-        data_df['logo_base64'] = data_df['logo_path'].apply(image_to_base64)
+        # Check if data_df is available and has required columns
+        if data_df is not None and not data_df.empty and 'logo_path' in data_df.columns:
+            # Convert local paths to base64 strings
+            data_df['logo_base64'] = data_df['logo_path'].apply(image_to_base64)
+        else:
+            st.warning("⚠️ Logo data not available")
+            data_df = pd.DataFrame()  # Create empty dataframe
         
         # st.markdown("<h3 style='text-align: center; margin-bottom: 20px; background-image: linear-gradient(to right, #4ced94, #4eabf2); color:#061c04;'>"
         #             "Ranking Table</h3>", unsafe_allow_html=True)
@@ -450,17 +482,23 @@ def main_ranking():
         table_col1,table_col2,table_col3,table_col4 = st.columns(4)
 
         with table_col1:
-
-            data_df_k12 = data_df[data_df['Segment'] == 'K12']
-            # Use data_editor with ImageColumn
-            st.data_editor(
-                data_df_k12[['edtech_name', 'logo_base64']],
-                column_config={
-                    "logo_base64": st.column_config.ImageColumn("K12",width='medium')
-                },
-                hide_index=True,
-                key='K12'
-            )
+            # Check if data is available for K12 segment
+            if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
+                data_df_k12 = data_df[data_df['Segment'] == 'K12']
+                if not data_df_k12.empty:
+                    # Use data_editor with ImageColumn
+                    st.data_editor(
+                        data_df_k12[['edtech_name', 'logo_base64']],
+                        column_config={
+                            "logo_base64": st.column_config.ImageColumn("K12",width='medium')
+                        },
+                        hide_index=True,
+                        key='K12'
+                    )
+                else:
+                    st.info("No K12 data available")
+            else:
+                st.warning("⚠️ K12 table data not available")
 
         with table_col2:
 
