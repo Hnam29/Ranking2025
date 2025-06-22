@@ -16,7 +16,6 @@ matplotlib==3.7.2
 
 # Text processing and NLP
 underthesea==6.7.0
-wordcloud==1.9.2
 
 # Core Python packages
 numpy==1.25.0

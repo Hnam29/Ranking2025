@@ -455,9 +455,25 @@ def main_app():
             st.plotly_chart(fig)
 
             import matplotlib.pyplot as plt
-            from wordcloud import WordCloud
             import string
-            from underthesea import word_tokenize
+
+            # Try to import wordcloud, handle gracefully if not available
+            try:
+                from wordcloud import WordCloud
+                WORDCLOUD_AVAILABLE = True
+            except ImportError:
+                WORDCLOUD_AVAILABLE = False
+                st.warning("WordCloud package not available. Word cloud visualization disabled.")
+
+            # Try to import underthesea, handle gracefully if not available
+            try:
+                from underthesea import word_tokenize
+                UNDERTHESEA_AVAILABLE = True
+            except ImportError:
+                UNDERTHESEA_AVAILABLE = False
+                # Fallback to simple tokenization
+                def word_tokenize(text, format="text"):
+                    return text
 
             # Vietnamese stopwords (you can expand this list)
             vietnamese_stopwords = set([
@@ -472,12 +488,20 @@ def main_app():
                 # Remove punctuation and digits
                 text = text.translate(str.maketrans('', '', string.punctuation + string.digits))
                 # Tokenize
-                tokens = word_tokenize(text, format="text").split()
+                if UNDERTHESEA_AVAILABLE:
+                    tokens = word_tokenize(text, format="text").split()
+                else:
+                    # Simple tokenization fallback
+                    tokens = text.split()
                 # Remove stopwords and short words
                 cleaned = [word for word in tokens if word not in vietnamese_stopwords and len(word) > 1]
                 return ' '.join(cleaned)
 
             def generate_wordcloud(text):
+                if not WORDCLOUD_AVAILABLE:
+                    st.info("WordCloud visualization is not available in this deployment.")
+                    return None
+
                 # Try to use a system font, fallback to default if not available
                 try:
                     wordcloud = WordCloud(
@@ -517,7 +541,8 @@ def main_app():
 
             if joined_text.strip():
                 fig = generate_wordcloud(joined_text)
-                st.pyplot(fig)
+                if fig is not None:
+                    st.pyplot(fig)
             else:
                 st.write("No clean words found for this app.")
 
