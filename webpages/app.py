@@ -130,13 +130,25 @@ def main_app():
                 SELECT DISTINCT segment as Segment FROM dim_ranking_app WHERE segment != ''
                 """
             segment = execute_sql_to_dataframe(sql_query1)
-            segment_sel = st.selectbox("Select segment", segment['Segment'], index=None)
+
+            # Check if data is available
+            if segment is not None and not segment.empty and 'Segment' in segment.columns:
+                segment_sel = st.selectbox("Select segment", segment['Segment'], index=None)
+            else:
+                st.warning("⚠️ Segment data not available")
+                segment_sel = None
 
             sql_query2 = f"""
                 SELECT DISTINCT category as Category FROM dim_ranking_app WHERE category != ''
                 """
             category = execute_sql_to_dataframe(sql_query2)
-            category_sel = st.selectbox("Select category", category['Category'], index=None)
+
+            # Check if data is available
+            if category is not None and not category.empty and 'Category' in category.columns:
+                category_sel = st.selectbox("Select category", category['Category'], index=None)
+            else:
+                st.warning("⚠️ Category data not available")
+                category_sel = None
 
             col1, col2 = st.columns([6,4])
             with col1:
@@ -159,7 +171,14 @@ def main_app():
                     sql_query3 += " AND " + " AND ".join(conditions)
 
                 name = execute_sql_to_dataframe(sql_query3)
-                # app_name = st.selectbox("Select app", name['edtech_name'], index=None)
+
+                # Check if name data is available
+                if name is not None and not name.empty and 'edtech_name' in name.columns:
+                    # app_name = st.selectbox("Select app", name['edtech_name'], index=None)
+                    pass
+                else:
+                    st.warning("⚠️ App name data not available")
+                    name = pd.DataFrame({'edtech_name': []})  # Create empty DataFrame with expected column
             # with col2:
             #     st.warning('Note: IOS app has no download number!')
 
@@ -305,28 +324,35 @@ def main_app():
             # dml_sql += " LIMIT 7"
             data4 = execute_sql_to_dataframe(dml_sql)
 
-            import altair as alt
-            # Bước 1: Tính tổng các cột cần thiết và sắp xếp dữ liệu gốc
-            # data4['total_score'] = data4['app_popularity'] + data4['app_scalability'] + data4['user_sentiment']
-            data4['total_score'] = data4['app_popularity'] + data4['user_sentiment']
+            # Check if data4 is available and has required columns
+            if data4 is not None and not data4.empty and all(col in data4.columns for col in ['app_popularity', 'user_sentiment', 'edtech_name']):
+                import altair as alt
+                # Bước 1: Tính tổng các cột cần thiết và sắp xếp dữ liệu gốc
+                # data4['total_score'] = data4['app_popularity'] + data4['app_scalability'] + data4['user_sentiment']
+                data4['total_score'] = data4['app_popularity'] + data4['user_sentiment']
 
-            sorted_data = data4.sort_values('total_score', ascending=False)
+                sorted_data = data4.sort_values('total_score', ascending=False)
+            else:
+                st.warning("⚠️ Ranking data not available. Please check your database connection.")
+                # Create empty data to prevent errors
+                data4 = pd.DataFrame()
+                sorted_data = pd.DataFrame()
 
-            # Bước 2: Tạo dữ liệu dạng dài (melted) với thứ tự đã được sắp xếp
-            data_melted = sorted_data.melt(
-                id_vars=['total_score','edtech_name'],  # Giữ lại cột total_score để sắp xếp
-                # value_vars=['app_popularity', 'app_scalability', 'user_sentiment'],
-                value_vars=['app_popularity', 'user_sentiment'],
-                var_name='variable',
-                value_name='value'
-            )
+                # Bước 2: Tạo dữ liệu dạng dài (melted) với thứ tự đã được sắp xếp
+                data_melted = sorted_data.melt(
+                    id_vars=['total_score','edtech_name'],  # Giữ lại cột total_score để sắp xếp
+                    # value_vars=['app_popularity', 'app_scalability', 'user_sentiment'],
+                    value_vars=['app_popularity', 'user_sentiment'],
+                    var_name='variable',
+                    value_name='value'
+                )
 
-            # Tạo thứ tự hiển thị cho các biến
-            data_melted['order'] = data_melted['variable'].map({
-                'app_popularity': 1,
-                # 'app_scalability': 2,
-                'user_sentiment': 2
-            })
+                # Tạo thứ tự hiển thị cho các biến
+                data_melted['order'] = data_melted['variable'].map({
+                    'app_popularity': 1,
+                    # 'app_scalability': 2,
+                    'user_sentiment': 2
+                })
 
             # Bước 3: Tạo biểu đồ với nhãn giá trị và sắp xếp
             def create_horizontal_stacked_bar_chart(data_melted):
@@ -392,8 +418,11 @@ def main_app():
                 return chart
 
             # Tạo và hiển thị biểu đồ
-            chart = create_horizontal_stacked_bar_chart(data_melted)
-            st.altair_chart(chart, use_container_width=True)
+            if not data_melted.empty:
+                chart = create_horizontal_stacked_bar_chart(data_melted)
+                st.altair_chart(chart, use_container_width=True)
+            else:
+                st.info("📊 No ranking data available to display chart.")
 
         # st.markdown('---')
     
@@ -406,53 +435,66 @@ def main_app():
         scorecard_chart2_column, chart3_column = st.columns([4,6],gap='medium')
 
         with scorecard_chart2_column:
-            app_name = st.selectbox("Select app", name['edtech_name'], index=None)
+            # Check if name data is available for app selection
+            if name is not None and not name.empty and 'edtech_name' in name.columns:
+                app_name = st.selectbox("Select app", name['edtech_name'], index=None)
+            else:
+                st.warning("⚠️ No apps available for selection")
+                app_name = None
 
-            sql_query_gauge = f"""
-                SELECT f.`star number` AS star_number FROM dim_ranking_app d
-                INNER JOIN fact_ranking_app f 
-                ON d.`app url` = f.`app url`
-                WHERE d.`app name` = '{app_name}'
-                """
-            star_rate = execute_sql_to_dataframe(sql_query_gauge)
+            # Only proceed if app_name is selected
+            if app_name:
+                sql_query_gauge = f"""
+                    SELECT f.`star number` AS star_number FROM dim_ranking_app d
+                    INNER JOIN fact_ranking_app f
+                    ON d.`app url` = f.`app url`
+                    WHERE d.`app name` = '{app_name}'
+                    """
+                star_rate = execute_sql_to_dataframe(sql_query_gauge)
 
-            # st.markdown("<h6 style='text-align: center;'>Sentiment Metric</h6>", unsafe_allow_html=True)
-            import plotly.graph_objects as go
+                # Check if star_rate data is available
+                if star_rate is not None and not star_rate.empty and 'star_number' in star_rate.columns:
+                    # st.markdown("<h6 style='text-align: center;'>Sentiment Metric</h6>", unsafe_allow_html=True)
+                    import plotly.graph_objects as go
 
-            def create_gauge_chart(sentiment_score):
-                """Creates a gauge chart for sentiment score (0-5)."""
+                    def create_gauge_chart(sentiment_score):
+                        """Creates a gauge chart for sentiment score (0-5)."""
 
-                fig = go.Figure(go.Indicator(
-                    domain={'x': [0, 1], 'y': [0, 1]},
-                    value=sentiment_score,
-                    mode="gauge+number",
-                    # title={'text': "Sentiment Score (0-5)"},
-                    gauge={
-                        'axis': {'range': [0, 5]},  # Explicitly setting 0 as lower bound
-                        'bar': {'color': "darkblue", 'thickness': 0.3},  # Increase thickness
-                        'steps': [
-                            {'range': [0, 1], 'color': "red"},
-                            {'range': [1, 2], 'color': "orange"},
-                            {'range': [2, 3], 'color': "yellow"},
-                            {'range': [3, 4], 'color': "green"},
-                            {'range': [4, 5], 'color': "purple"}],
-                        'threshold': {
-                            'line': {'color': "white", 'width': 6},  # Increase width for visibility
-                            'thickness': 0.7,  # Increase thickness
-                            'value': sentiment_score}}))
+                        fig = go.Figure(go.Indicator(
+                            domain={'x': [0, 1], 'y': [0, 1]},
+                            value=sentiment_score,
+                            mode="gauge+number",
+                            # title={'text': "Sentiment Score (0-5)"},
+                            gauge={
+                                'axis': {'range': [0, 5]},  # Explicitly setting 0 as lower bound
+                                'bar': {'color': "darkblue", 'thickness': 0.3},  # Increase thickness
+                                'steps': [
+                                    {'range': [0, 1], 'color': "red"},
+                                    {'range': [1, 2], 'color': "orange"},
+                                    {'range': [2, 3], 'color': "yellow"},
+                                    {'range': [3, 4], 'color': "green"},
+                                    {'range': [4, 5], 'color': "purple"}],
+                                'threshold': {
+                                    'line': {'color': "white", 'width': 6},  # Increase width for visibility
+                                    'thickness': 0.7,  # Increase thickness
+                                    'value': sentiment_score}}))
 
-                # Update layout for better visibility
-                fig.update_layout(
-                    height=200,  # Increase height
-                    width=400,   # Increase width
-                    margin=dict(l=20, r=20, t=50, b=20)  # Reduce margins slightly
-                )
+                        # Update layout for better visibility
+                        fig.update_layout(
+                            height=200,  # Increase height
+                            width=400,   # Increase width
+                            margin=dict(l=20, r=20, t=50, b=20)  # Reduce margins slightly
+                        )
 
-                return fig
-            
-            sentiment_score = star_rate["star_number"].iloc[0]  # Convert Series to a single float
-            fig = create_gauge_chart(sentiment_score)
-            st.plotly_chart(fig)
+                        return fig
+
+                    sentiment_score = star_rate["star_number"].iloc[0]  # Convert Series to a single float
+                    fig = create_gauge_chart(sentiment_score)
+                    st.plotly_chart(fig)
+                else:
+                    st.warning("⚠️ Sentiment score data not available for this app")
+            else:
+                st.info("👆 Please select an app to view sentiment analysis")
 
             import matplotlib.pyplot as plt
             import string
@@ -522,29 +564,34 @@ def main_app():
                 ax.imshow(wordcloud, interpolation='bilinear')
                 ax.axis('off')
                 return fig
+
             # Fetch the data for word cloud
             sql_word_cloud = f"""
                 SELECT d.`app name`, f.`content`
                 FROM fact_ranking_app_review f
                 INNER JOIN dim_ranking_app d
                 ON f.`app_id` = d.`app id`
-                WHERE d.`app name` = '{app_name}' 
+                WHERE d.`app name` = '{app_name}'
             """
             wordcloud_df = execute_sql_to_dataframe(sql_word_cloud)
 
-            # st.subheader("📱 App Review Word Cloud")
+            # Check if wordcloud data is available
+            if wordcloud_df is not None and not wordcloud_df.empty and 'content' in wordcloud_df.columns:
+                # st.subheader("📱 App Review Word Cloud")
 
-            # Filter & Clean
-            filtered_reviews = wordcloud_df[wordcloud_df['app name'] == app_name]['content'].dropna()
-            cleaned_reviews = filtered_reviews.apply(clean_text)
-            joined_text = " ".join(cleaned_reviews)
+                # Filter & Clean
+                filtered_reviews = wordcloud_df[wordcloud_df['app name'] == app_name]['content'].dropna()
+                cleaned_reviews = filtered_reviews.apply(clean_text)
+                joined_text = " ".join(cleaned_reviews)
 
-            if joined_text.strip():
-                fig = generate_wordcloud(joined_text)
-                if fig is not None:
-                    st.pyplot(fig)
+                if joined_text.strip():
+                    fig = generate_wordcloud(joined_text)
+                    if fig is not None:
+                        st.pyplot(fig)
+                else:
+                    st.write("No clean words found for this app.")
             else:
-                st.write("No clean words found for this app.")
+                st.info("📝 No review data available for word cloud generation")
 
         #     if app_name is not None:
         #         # Fetch data from MySQL
@@ -738,9 +785,17 @@ def main_app():
                 """
                 date_range_df = execute_sql_to_dataframe(sql_date_range)
 
-                # Extract min and max date from the result
-                min_available_date = pd.to_datetime(date_range_df['min_date'].iloc[0]).date()
-                max_available_date = pd.to_datetime(date_range_df['max_date'].iloc[0]).date()
+                # Check if date range data is available
+                if date_range_df is not None and not date_range_df.empty and 'min_date' in date_range_df.columns:
+                    # Extract min and max date from the result
+                    min_available_date = pd.to_datetime(date_range_df['min_date'].iloc[0]).date()
+                    max_available_date = pd.to_datetime(date_range_df['max_date'].iloc[0]).date()
+                else:
+                    # Use default date range if no data available
+                    from datetime import date, timedelta
+                    max_available_date = date.today()
+                    min_available_date = max_available_date - timedelta(days=365)  # 1 year ago
+                    st.warning("⚠️ Using default date range as database data is not available")
 
                 # Lưu trữ giá trị mặc định trong session state để dùng cho nút reset
                 if 'default_min_date' not in st.session_state:
@@ -1139,7 +1194,13 @@ def main_app():
                 #     sql_query3 += " AND " + " AND ".join(conditions)
 
                 app = execute_sql_to_dataframe(sql_comparison)
-                app_name = st.multiselect("Select apps", app['edtech_name'],key='compare')
+
+                # Check if app comparison data is available
+                if app is not None and not app.empty and 'edtech_name' in app.columns:
+                    app_name = st.multiselect("Select apps", app['edtech_name'], key='compare')
+                else:
+                    st.warning("⚠️ No apps available for comparison")
+                    app_name = []
 
         
             with col2:
