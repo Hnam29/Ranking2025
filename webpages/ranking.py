@@ -395,19 +395,65 @@ def main_ranking():
         from pathlib import Path
 
         def image_to_base64(path):
-            if not isinstance(path, str) or not Path(path).exists():
-                return None  # or return a default image base64 string
-            with open(path, "rb") as img_file:
-                b64_string = base64.b64encode(img_file.read()).decode("utf-8")
-                suffix = Path(path).suffix.lower().replace('.', '')  # e.g., 'png'
-                return f"data:image/{suffix};base64,{b64_string}"
+            if pd.isna(path) or not isinstance(path, str) or path.strip() == '':
+                return None  # Return None for missing/empty paths
 
-        # Try to load Excel file with logo mappings
-        excel_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'web_logo_mapping_update.xlsx')
-        try:
-            data_df = pd.read_excel(excel_path)
-        except FileNotFoundError:
-            st.warning("Logo mapping file not found. Using default display.")
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+            # Handle both relative and absolute paths
+            if not os.path.isabs(path):
+                # For relative paths, try multiple variations
+                possible_paths = []
+
+                # Original path as-is
+                possible_paths.append(os.path.join(project_root, path))
+
+                # Fix folder name: logo_web -> logo_processed_web (correct folder name)
+                if path.startswith('logo_web/'):
+                    # Replace with correct folder name
+                    fixed_path = path.replace('logo_web/', 'logo_processed_web/')
+                    possible_paths.append(os.path.join(project_root, fixed_path))
+
+                    # The files in logo_processed_web don't have _logo suffix, they use the original naming
+                    # So logo_web/acabiz.png should map to logo_processed_web/acabiz.png
+
+                # Try to find the file
+                full_path = None
+                for test_path in possible_paths:
+                    if Path(test_path).exists():
+                        full_path = test_path
+                        break
+            else:
+                full_path = path
+
+            # Check if file exists
+            if not full_path or not Path(full_path).exists():
+                return None
+
+            try:
+                with open(full_path, "rb") as img_file:
+                    b64_string = base64.b64encode(img_file.read()).decode("utf-8")
+                    suffix = Path(full_path).suffix.lower().replace('.', '')  # e.g., 'png'
+                    return f"data:image/{suffix};base64,{b64_string}"
+            except Exception:
+                return None
+
+        # Try to load Excel file with logo mappings (try both files)
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        excel_files = ['web_logo_mapping.xlsx', 'web_logo_mapping_update.xlsx']
+        data_df = pd.DataFrame()
+
+        for excel_file in excel_files:
+            excel_path = os.path.join(project_root, excel_file)
+            try:
+                data_df = pd.read_excel(excel_path)
+                st.info(f"✅ Loaded logo mapping from: {excel_file}")
+                break
+            except FileNotFoundError:
+                continue
+
+        if data_df.empty:
+            st.warning("⚠️ Logo mapping file not found. Using default display.")
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Check if data_df is available and has required columns
