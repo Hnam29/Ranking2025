@@ -409,19 +409,26 @@ def main_ranking():
                 # Original path as-is
                 possible_paths.append(os.path.join(project_root, path))
 
-                # Fix folder name: logo_web -> logo_processed_web (correct folder name)
-                # Also handle logos_web -> logo_processed_web
-                if path.startswith('logo_web/'):
-                    # Replace with correct folder name
-                    fixed_path = path.replace('logo_web/', 'logo_processed_web/')
-                    possible_paths.append(os.path.join(project_root, fixed_path))
-                elif path.startswith('logos_web/'):
-                    # Replace with correct folder name
-                    fixed_path = path.replace('logos_web/', 'logo_processed_web/')
-                    possible_paths.append(os.path.join(project_root, fixed_path))
+                # Handle logos_web folder with _logo suffix in filenames
+                if path.startswith('logos_web/'):
+                    # First try the original path as-is
+                    possible_paths.append(os.path.join(project_root, path))
 
-                    # The files in logo_processed_web don't have _logo suffix, they use the original naming
-                    # So logos_web/acabiz.png should map to logo_processed_web/acabiz.png
+                    # Then try with _logo suffix added to filename
+                    # logos_web/acabiz.png -> logos_web/acabiz_logo.png
+                    filename = os.path.basename(path)
+                    name, ext = os.path.splitext(filename)
+                    logo_filename = f"{name}_logo{ext}"
+                    logo_path = os.path.join('logos_web', logo_filename)
+                    possible_paths.append(os.path.join(project_root, logo_path))
+                elif path.startswith('logo_web/'):
+                    # Handle legacy logo_web folder name
+                    # Convert logo_web/ to logos_web/ and add _logo suffix
+                    filename = os.path.basename(path)
+                    name, ext = os.path.splitext(filename)
+                    logo_filename = f"{name}_logo{ext}"
+                    logo_path = os.path.join('logos_web', logo_filename)
+                    possible_paths.append(os.path.join(project_root, logo_path))
 
                 # Try to find the file
                 full_path = None
