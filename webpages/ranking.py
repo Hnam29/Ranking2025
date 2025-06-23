@@ -395,80 +395,36 @@ def main_ranking():
         from pathlib import Path
 
         def image_to_base64(path):
-
+            """Simple image to base64 converter with straightforward path mapping"""
             if pd.isna(path) or not isinstance(path, str) or path.strip() == '':
-                return None  # Return None for missing/empty paths
+                return None
 
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-            # Handle both relative and absolute paths
-            if not os.path.isabs(path):
-                # For relative paths, try multiple variations
-                possible_paths = []
-
-                # Original path as-is
-                possible_paths.append(os.path.join(project_root, path))
-
-                # Handle logos_web folder with _logo suffix and case sensitivity
-                if path.startswith('logos_web/') or path.startswith('logo_web/'):
-                    # First try the original path as-is
-                    possible_paths.append(os.path.join(project_root, path))
-
-                    # Extract filename and try with _logo suffix
-                    filename = os.path.basename(path)
-                    name, ext = os.path.splitext(filename)
-
-                    # Try different case variations with _logo suffix
-                    # logos_web/acabiz.png -> logos_web/acabiz_logo.png, Acabiz_logo.png, etc.
-                    logo_variations = [
-                        f"{name}_logo{ext}",           # acabiz_logo.png
-                        f"{name.capitalize()}_logo{ext}",  # Acabiz_logo.png
-                        f"{name.upper()}_logo{ext}",   # ACABIZ_logo.png
-                        f"{name.lower()}_logo{ext}",   # acabiz_logo.png
-                    ]
-
-                    for logo_filename in logo_variations:
-                        logo_path = os.path.join('logos_web', logo_filename)
-                        possible_paths.append(os.path.join(project_root, logo_path))
-
-                    # Also try case-insensitive search in the actual folder
-                    logos_folder = os.path.join(project_root, 'logos_web')
-                    if os.path.exists(logos_folder):
-                        try:
-                            actual_files = os.listdir(logos_folder)
-                            target_name = name.lower()
-                            for actual_file in actual_files:
-                                actual_name = os.path.splitext(actual_file)[0].lower()
-                                if actual_name.replace('_logo', '') == target_name:
-                                    possible_paths.append(os.path.join(logos_folder, actual_file))
-                        except:
-                            pass
-
-                # Try to find the file
-                full_path = None
-                for test_path in possible_paths:
-                    if Path(test_path).exists():
-                        full_path = test_path
-                        break
-
-                # Debug: Show what was tried (only for first few files to avoid spam)
-                if not full_path and len(possible_paths) > 0:
-                    # Only show debug for a few files to avoid overwhelming the UI
-                    import random
-                    if random.random() < 0.1:  # Show debug for ~10% of failed files
-                        st.text(f"🔍 Debug - Could not find: {path}")
-                        st.text(f"   Tried: {len(possible_paths)} variations")
+            # Simple path mapping: logos_web/filename.ext -> logo_processed_web/filename.ext
+            if path.startswith('logos_web/'):
+                # Replace logos_web with logo_processed_web
+                corrected_path = path.replace('logos_web/', 'logo_processed_web/')
+                full_path = os.path.join(project_root, corrected_path)
+            elif path.startswith('logo_web/'):
+                # Handle legacy logo_web folder
+                corrected_path = path.replace('logo_web/', 'logo_processed_web/')
+                full_path = os.path.join(project_root, corrected_path)
+            elif not os.path.isabs(path):
+                # Relative path
+                full_path = os.path.join(project_root, path)
             else:
+                # Absolute path
                 full_path = path
 
             # Check if file exists
-            if not full_path or not Path(full_path).exists():
+            if not Path(full_path).exists():
                 return None
 
             try:
                 with open(full_path, "rb") as img_file:
                     b64_string = base64.b64encode(img_file.read()).decode("utf-8")
-                    suffix = Path(full_path).suffix.lower().replace('.', '')  # e.g., 'png'
+                    suffix = Path(full_path).suffix.lower().replace('.', '')
                     return f"data:image/{suffix};base64,{b64_string}"
             except Exception:
                 return None
