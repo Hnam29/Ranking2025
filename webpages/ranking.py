@@ -403,7 +403,7 @@ def main_ranking():
                 return f"data:image/{suffix};base64,{b64_string}"
 
         # Try to load Excel file with logo mappings
-        excel_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'web_logo_mapping_update.xlsx')
+        excel_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'web_logo_mapping.xlsx')
         try:
             data_df = pd.read_excel(excel_path)
         except FileNotFoundError:
