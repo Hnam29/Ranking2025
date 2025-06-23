@@ -395,6 +395,7 @@ def main_ranking():
         from pathlib import Path
 
         def image_to_base64(path):
+
             if pd.isna(path) or not isinstance(path, str) or path.strip() == '':
                 return None  # Return None for missing/empty paths
 
@@ -454,6 +455,7 @@ def main_ranking():
 
         if data_df.empty:
             st.warning("⚠️ Logo mapping file not found. Using default display.")
+
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Check if data_df is available and has required columns
