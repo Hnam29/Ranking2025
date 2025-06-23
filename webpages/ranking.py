@@ -409,26 +409,40 @@ def main_ranking():
                 # Original path as-is
                 possible_paths.append(os.path.join(project_root, path))
 
-                # Handle logos_web folder with _logo suffix in filenames
-                if path.startswith('logos_web/'):
+                # Handle logos_web folder with _logo suffix and case sensitivity
+                if path.startswith('logos_web/') or path.startswith('logo_web/'):
                     # First try the original path as-is
                     possible_paths.append(os.path.join(project_root, path))
 
-                    # Then try with _logo suffix added to filename
-                    # logos_web/acabiz.png -> logos_web/acabiz_logo.png
+                    # Extract filename and try with _logo suffix
                     filename = os.path.basename(path)
                     name, ext = os.path.splitext(filename)
-                    logo_filename = f"{name}_logo{ext}"
-                    logo_path = os.path.join('logos_web', logo_filename)
-                    possible_paths.append(os.path.join(project_root, logo_path))
-                elif path.startswith('logo_web/'):
-                    # Handle legacy logo_web folder name
-                    # Convert logo_web/ to logos_web/ and add _logo suffix
-                    filename = os.path.basename(path)
-                    name, ext = os.path.splitext(filename)
-                    logo_filename = f"{name}_logo{ext}"
-                    logo_path = os.path.join('logos_web', logo_filename)
-                    possible_paths.append(os.path.join(project_root, logo_path))
+
+                    # Try different case variations with _logo suffix
+                    # logos_web/acabiz.png -> logos_web/acabiz_logo.png, Acabiz_logo.png, etc.
+                    logo_variations = [
+                        f"{name}_logo{ext}",           # acabiz_logo.png
+                        f"{name.capitalize()}_logo{ext}",  # Acabiz_logo.png
+                        f"{name.upper()}_logo{ext}",   # ACABIZ_logo.png
+                        f"{name.lower()}_logo{ext}",   # acabiz_logo.png
+                    ]
+
+                    for logo_filename in logo_variations:
+                        logo_path = os.path.join('logos_web', logo_filename)
+                        possible_paths.append(os.path.join(project_root, logo_path))
+
+                    # Also try case-insensitive search in the actual folder
+                    logos_folder = os.path.join(project_root, 'logos_web')
+                    if os.path.exists(logos_folder):
+                        try:
+                            actual_files = os.listdir(logos_folder)
+                            target_name = name.lower()
+                            for actual_file in actual_files:
+                                actual_name = os.path.splitext(actual_file)[0].lower()
+                                if actual_name.replace('_logo', '') == target_name:
+                                    possible_paths.append(os.path.join(logos_folder, actual_file))
+                        except:
+                            pass
 
                 # Try to find the file
                 full_path = None
