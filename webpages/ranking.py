@@ -410,13 +410,18 @@ def main_ranking():
                 possible_paths.append(os.path.join(project_root, path))
 
                 # Fix folder name: logo_web -> logo_processed_web (correct folder name)
+                # Also handle logos_web -> logo_processed_web
                 if path.startswith('logo_web/'):
                     # Replace with correct folder name
                     fixed_path = path.replace('logo_web/', 'logo_processed_web/')
                     possible_paths.append(os.path.join(project_root, fixed_path))
+                elif path.startswith('logos_web/'):
+                    # Replace with correct folder name
+                    fixed_path = path.replace('logos_web/', 'logo_processed_web/')
+                    possible_paths.append(os.path.join(project_root, fixed_path))
 
                     # The files in logo_processed_web don't have _logo suffix, they use the original naming
-                    # So logo_web/acabiz.png should map to logo_processed_web/acabiz.png
+                    # So logos_web/acabiz.png should map to logo_processed_web/acabiz.png
 
                 # Try to find the file
                 full_path = None
@@ -459,9 +464,17 @@ def main_ranking():
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Check if data_df is available and has required columns
-        if data_df is not None and not data_df.empty and 'logo_path' in data_df.columns:
+        # Handle both 'logo_path' and 'logos_path' column names
+        logo_column = None
+        if data_df is not None and not data_df.empty:
+            if 'logos_path' in data_df.columns:
+                logo_column = 'logos_path'
+            elif 'logo_path' in data_df.columns:
+                logo_column = 'logo_path'
+
+        if logo_column:
             # Convert local paths to base64 strings
-            data_df['logo_base64'] = data_df['logo_path'].apply(image_to_base64)
+            data_df['logo_base64'] = data_df[logo_column].apply(image_to_base64)
         else:
             st.warning("⚠️ Logo data not available")
             data_df = pd.DataFrame()  # Create empty dataframe
