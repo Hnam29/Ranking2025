@@ -77,7 +77,11 @@ python Main.py
 The system uses MySQL with the following key tables:
 - `dim_ranking_web`: Website evaluation data
 - `dim_ranking_app`: Mobile app evaluation data
-- `fact_ranking`: Aggregated ranking results
+- `fact_ranking_web`: Aggregated web ranking results
+- `fact_ranking_app`: Aggregated app ranking results
+- `fact_ranking_app_review`: App reviews data
+
+
 
 ## 🔒 Security Features
 
