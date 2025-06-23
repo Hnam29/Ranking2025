@@ -450,6 +450,14 @@ def main_ranking():
                     if Path(test_path).exists():
                         full_path = test_path
                         break
+
+                # Debug: Show what was tried (only for first few files to avoid spam)
+                if not full_path and len(possible_paths) > 0:
+                    # Only show debug for a few files to avoid overwhelming the UI
+                    import random
+                    if random.random() < 0.1:  # Show debug for ~10% of failed files
+                        st.text(f"🔍 Debug - Could not find: {path}")
+                        st.text(f"   Tried: {len(possible_paths)} variations")
             else:
                 full_path = path
 
@@ -474,13 +482,20 @@ def main_ranking():
             excel_path = os.path.join(project_root, excel_file)
             try:
                 data_df = pd.read_excel(excel_path)
-                st.info(f"✅ Loaded logo mapping from: {excel_file}")
+                st.success(f"✅ Loaded logo mapping from: {excel_file}")
+                st.info(f"📊 Found {len(data_df)} total entries, {data_df[data_df.get('logos_path', pd.Series()).notna()].shape[0] if 'logos_path' in data_df.columns else 0} with logo paths")
                 break
             except FileNotFoundError:
                 continue
 
         if data_df.empty:
             st.warning("⚠️ Logo mapping file not found. Using default display.")
+            # Show what files are actually available for debugging
+            try:
+                available_files = [f for f in os.listdir(project_root) if f.endswith('.xlsx')]
+                st.info(f"📁 Available Excel files: {available_files}")
+            except:
+                pass
 
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
@@ -495,7 +510,22 @@ def main_ranking():
 
         if logo_column:
             # Convert local paths to base64 strings
+            st.info(f"🔍 Processing {logo_column} column with {data_df[logo_column].notna().sum()} valid paths")
+
+            # Add debugging for first few logo conversions
             data_df['logo_base64'] = data_df[logo_column].apply(image_to_base64)
+
+            # Show conversion results
+            successful_logos = data_df['logo_base64'].notna().sum()
+            total_attempts = data_df[logo_column].notna().sum()
+            st.info(f"📸 Logo conversion: {successful_logos}/{total_attempts} successful")
+
+            # Show sample of failed conversions for debugging
+            failed_logos = data_df[(data_df[logo_column].notna()) & (data_df['logo_base64'].isna())]
+            if not failed_logos.empty and len(failed_logos) <= 3:
+                st.warning(f"⚠️ Failed to load logos for: {', '.join(failed_logos['edtech_name'].head(3).tolist())}")
+                for _, row in failed_logos.head(3).iterrows():
+                    st.text(f"   • {row['edtech_name']}: {row[logo_column]}")
         else:
             st.warning("⚠️ Logo data not available")
             data_df = pd.DataFrame()  # Create empty dataframe
