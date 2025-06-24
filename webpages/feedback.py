@@ -5,14 +5,14 @@ from datetime import datetime
 import uuid
 import os
 
-# # Try to import Google Sheets dependencies
-# try:
-#     import gspread
-#     from google.oauth2.service_account import Credentials
-#     GSPREAD_AVAILABLE = True
-# except ImportError:
-#     GSPREAD_AVAILABLE = False
-#     st.warning("Google Sheets integration not available. Feedback will be displayed only.")
+# Try to import Google Sheets dependencies
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    GSPREAD_AVAILABLE = True
+except ImportError:
+    GSPREAD_AVAILABLE = False
+    st.warning("Google Sheets integration not available. Feedback will be displayed only.")
 
 # # Try to import footer
 # try:
@@ -26,23 +26,7 @@ import os
 #             st.markdown("**EdTech Ranking 2025** - Feedback System")
 
 # Google Sheets setup for saving feedback
-@st.cache_resource
-from google.oauth2 import service_account
-import gspread
-
-def init_feedback_sheets():
-    """Initialize Google Sheets client for feedback"""
-    try:
-        service_account_info = st.secrets["GCP_SERVICE_ACCOUNT"]
-        credentials = service_account.Credentials.from_service_account_info(
-            service_account_info,
-            scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-        )
-        gc = gspread.authorize(credentials)
-        return gc
-    except Exception as e:
-        st.error(f"Error initializing Google Sheets: {e}")
-        return None
+# @st.cache_resource
 
 # def init_feedback_sheets():
 #     """Initialize Google Sheets connection for feedback saving"""
@@ -409,23 +393,34 @@ def main_feedback():
     # Google Sheets connection for raw data
     if GSPREAD_AVAILABLE:
         try:
-            # Try to get credentials from Streamlit secrets first
-            if "gcp_service_account" in st.secrets:
-                credentials = Credentials.from_service_account_info(
-                    st.secrets["gcp_service_account"],
-                    scopes=['https://www.googleapis.com/auth/spreadsheets']
-                )
-            else:
-                # Fallback to local file (for development)
-                current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                SERVICE_ACCOUNT_FILE = os.path.join(current_dir, 'Criteria-Scrapers', 'credentials.json')
+            # # Try to get credentials from Streamlit secrets first
+            # if "gcp_service_account" in st.secrets:
+            #     credentials = Credentials.from_service_account_info(
+            #         st.secrets["gcp_service_account"],
+            #         scopes=['https://www.googleapis.com/auth/spreadsheets']
+            #     )
+            # else:
+            #     # Fallback to local file (for development)
+            #     current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            #     SERVICE_ACCOUNT_FILE = os.path.join(current_dir, 'Criteria-Scrapers', 'credentials.json')
 
-                if not os.path.exists(SERVICE_ACCOUNT_FILE):
-                    st.error("Google Sheets credentials not found. Raw data display disabled.")
-                    return
+            #     if not os.path.exists(SERVICE_ACCOUNT_FILE):
+            #         st.error("Google Sheets credentials not found. Raw data display disabled.")
+            #         return
 
-                credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=['https://www.googleapis.com/auth/spreadsheets'])
+            #     credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=['https://www.googleapis.com/auth/spreadsheets'])
 
+            # gc = gspread.authorize(credentials)
+            # spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
+            # spreadsheet = gc.open_by_url(spreadsheet_url)
+
+            from google.oauth2 import service_account
+            import gspread
+            service_account_info = st.secrets["GCP_SERVICE_ACCOUNT"]
+            credentials = service_account.Credentials.from_service_account_info(
+                service_account_info,
+                scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+            )
             gc = gspread.authorize(credentials)
             spreadsheet_url = "https://docs.google.com/spreadsheets/d/15Eboneu5_6UfUNymCU_Dz1ZrhPCsoKECXY2MsUYBOP8"
             spreadsheet = gc.open_by_url(spreadsheet_url)
