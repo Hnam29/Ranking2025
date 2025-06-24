@@ -438,18 +438,19 @@ def main_ranking():
             excel_path = os.path.join(project_root, excel_file)
             try:
                 data_df = pd.read_excel(excel_path)
-                st.success(f"✅ Loaded logo mapping from: {excel_file}")
-                st.info(f"📊 Found {len(data_df)} total entries, {data_df[data_df.get('logos_path', pd.Series()).notna()].shape[0] if 'logos_path' in data_df.columns else 0} with logo paths")
+                # st.success(f"✅ Loaded logo mapping from: {excel_file}")
+                # st.info(f"📊 Found {len(data_df)} total entries, {data_df[data_df.get('logos_path', pd.Series()).notna()].shape[0] if 'logos_path' in data_df.columns else 0} with logo paths")
                 break
             except FileNotFoundError:
                 continue
             except Exception as e:
-                st.error(f"❌ Error loading {excel_file}: {str(e)}")
+                # st.error(f"❌ Error loading {excel_file}: {str(e)}")
                 continue
-
-        if data_df.empty:
-            st.warning("⚠️ Logo mapping file not found. Using default display.")
-            data_df = pd.DataFrame()  # Empty dataframe as fallback
+                
+        # FOR TESTING
+        # if data_df.empty:
+        #     st.warning("⚠️ Logo mapping file not found. Using default display.")
+        #     data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Check if data_df is available and has required columns
         # Handle both 'logo_path' and 'logos_path' column names
@@ -462,24 +463,24 @@ def main_ranking():
 
         if logo_column:
             # Convert local paths to base64 strings
-            st.info(f"🔍 Processing {logo_column} column with {data_df[logo_column].notna().sum()} valid paths")
+            # st.info(f"🔍 Processing {logo_column} column with {data_df[logo_column].notna().sum()} valid paths")
 
             # Add debugging for first few logo conversions
             data_df['logo_base64'] = data_df[logo_column].apply(image_to_base64)
 
             # Show conversion results
-            successful_logos = data_df['logo_base64'].notna().sum()
-            total_attempts = data_df[logo_column].notna().sum()
-            st.info(f"📸 Logo conversion: {successful_logos}/{total_attempts} successful")
+            # successful_logos = data_df['logo_base64'].notna().sum()
+            # total_attempts = data_df[logo_column].notna().sum()
+            # st.info(f"📸 Logo conversion: {successful_logos}/{total_attempts} successful")
 
             # Show sample of failed conversions for debugging
-            failed_logos = data_df[(data_df[logo_column].notna()) & (data_df['logo_base64'].isna())]
-            if not failed_logos.empty and len(failed_logos) <= 3:
-                st.warning(f"⚠️ Failed to load logos for: {', '.join(failed_logos['edtech_name'].head(3).tolist())}")
-                for _, row in failed_logos.head(3).iterrows():
-                    st.text(f"   • {row['edtech_name']}: {row[logo_column]}")
+            # failed_logos = data_df[(data_df[logo_column].notna()) & (data_df['logo_base64'].isna())]
+            # if not failed_logos.empty and len(failed_logos) <= 3:
+                # st.warning(f"⚠️ Failed to load logos for: {', '.join(failed_logos['edtech_name'].head(3).tolist())}")
+                # for _, row in failed_logos.head(3).iterrows():
+                    # st.text(f"   • {row['edtech_name']}: {row[logo_column]}")
         else:
-            st.warning("⚠️ Logo data not available")
+            # st.warning("⚠️ Logo data not available")
             data_df = pd.DataFrame()  # Create empty dataframe
         
         # st.markdown("<h3 style='text-align: center; margin-bottom: 20px; background-image: linear-gradient(to right, #4ced94, #4eabf2); color:#061c04;'>"
@@ -550,6 +551,8 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_k12 = data_df[data_df['Segment'] == 'K12']
                 if not data_df_k12.empty:
+                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    
                     # Use data_editor with ImageColumn
                     st.data_editor(
                         data_df_k12[['edtech_name', 'logo_base64']],
@@ -569,6 +572,8 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_he = data_df[data_df['Segment'] == 'HE']
                 if not data_df_he.empty:
+                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    
                     # Use data_editor with ImageColumn
                     st.data_editor(
                         data_df_he[['edtech_name', 'logo_base64']],
@@ -588,6 +593,8 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_kd = data_df[data_df['Segment'] == 'Mầm non']
                 if not data_df_kd.empty:
+                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    
                     # Use data_editor with ImageColumn
                     st.data_editor(
                         data_df_kd[['edtech_name', 'logo_base64']],
@@ -607,17 +614,7 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_wk = data_df[data_df['Segment'] == 'Đi làm']
                 if not data_df_wk.empty:
-
-                    # Create a status column for missing logos
-                    data_df_wk['logo_status'] = data_df_wk['logo_base64'].apply(
-                        lambda x: "✅ Available" if pd.notna(x) and x != '' else "❌ Not Found"
-                    )
-                    
-                    # Only show images for rows that have them
-                    display_df = data_df_wk[['edtech_name', 'logo_base64', 'logo_status']].copy()
-                    
-                    # Replace None/empty with empty string for ImageColumn
-                    display_df['logo_base64'] = display_df['logo_base64'].fillna('')
+                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
                     
                     # Use data_editor with ImageColumn
                     st.data_editor(
