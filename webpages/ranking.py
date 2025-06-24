@@ -607,6 +607,7 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_wk = data_df[data_df['Segment'] == 'Đi làm']
                 if not data_df_wk.empty:
+                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Updating...")
                     # Use data_editor with ImageColumn
                     st.data_editor(
                         data_df_wk[['edtech_name', 'logo_base64']],
