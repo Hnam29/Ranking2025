@@ -470,4 +470,4 @@ def main_feedback():
     except Exception as e:
         st.error(f"Lỗi khi tải dữ liệu: {e}")
 
-    footer()
+    # footer()
