@@ -522,7 +522,7 @@ def main_app():
             try:
                 from underthesea import word_tokenize
                 TOKENIZER_TYPE = "underthesea"
-                st.success("✅ Using underthesea for Vietnamese text processing (highest accuracy)")
+                # st.success("✅ Using underthesea for Vietnamese text processing (highest accuracy)")
             except ImportError:
                 # Second choice: PyVi (good accuracy, pure Python, Vietnamese-specific)
                 try:
@@ -535,7 +535,7 @@ def main_app():
                         else:
                             return tokenized.split()
                     TOKENIZER_TYPE = "pyvi"
-                    st.info("📝 Using PyVi for Vietnamese text processing (good accuracy)")
+                    # st.info("📝 Using PyVi for Vietnamese text processing (good accuracy)")
                 except ImportError:
                     # Third choice: Enhanced regex-based Vietnamese tokenization
                     try:
