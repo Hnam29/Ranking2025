@@ -42,7 +42,7 @@ def main_web():
       img = get_img_as_base64('./webpages/bg2.jpeg')
       page_bg_img = f"""
       <style>
-         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(2) > div:nth-child(1) {{
+         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(2) {{
                background-image: url("data:image/jpeg;base64,{img}"); 
                border-radius: 5px;
             }}
