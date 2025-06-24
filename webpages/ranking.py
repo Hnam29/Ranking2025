@@ -21,6 +21,10 @@ except ImportError:
         execute_sql_to_dataframe = None
 
 def main_ranking():
+    # IMMEDIATE DEBUG - This should appear first
+    st.error("🚨 DEBUG: main_ranking function started!")
+    st.error(f"🚨 DEBUG: Current time: {pd.Timestamp.now()}")
+
     # Load CSS file
     current_dir = os.path.dirname(os.path.abspath(__file__))
     css_path = os.path.join(current_dir, 'ranking.css')
