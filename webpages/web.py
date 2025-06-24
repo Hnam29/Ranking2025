@@ -42,11 +42,17 @@ def main_web():
       img = get_img_as_base64('./webpages/bg2.jpeg')
       page_bg_img = f"""
       <style>
-         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {{
+         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(2) > div:nth-child(1) {{
                background-image: url("data:image/jpeg;base64,{img}"); 
                border-radius: 5px;
             }}
       </style>
+      # <style>
+      #    div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {{
+      #          background-image: url("data:image/jpeg;base64,{img}"); 
+      #          border-radius: 5px;
+      #       }}
+      # </style>
       """
       st.markdown(page_bg_img,unsafe_allow_html=True)
 
