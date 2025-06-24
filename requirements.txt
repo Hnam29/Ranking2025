@@ -5,6 +5,7 @@ streamlit-option-menu>=0.3.0
 
 # Database and data processing
 pandas>=2.0.0
+openpyxl>=3.0.0
 SQLAlchemy>=2.0.0
 PyMySQL>=1.0.0
 python-dotenv>=1.0.0

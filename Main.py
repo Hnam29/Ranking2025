@@ -1,38 +1,9 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-
-# IMMEDIATE DEBUG - Check if imports work
-st.error("🚨 DEBUG: Main.py started, imports beginning...")
-
-try:
-    from webpages.ranking import main_ranking
-    st.error("🚨 DEBUG: ranking import successful")
-except Exception as e:
-    st.error(f"🚨 DEBUG: ranking import FAILED: {str(e)}")
-    main_ranking = None
-
-try:
-    from webpages.web import main_web
-    st.error("🚨 DEBUG: web import successful")
-except Exception as e:
-    st.error(f"🚨 DEBUG: web import FAILED: {str(e)}")
-    main_web = None
-
-try:
-    from webpages.app import main_app
-    st.error("🚨 DEBUG: app import successful")
-except Exception as e:
-    st.error(f"🚨 DEBUG: app import FAILED: {str(e)}")
-    main_app = None
-
-try:
-    from webpages.feedback import main_feedback
-    st.error("🚨 DEBUG: feedback import successful")
-except Exception as e:
-    st.error(f"🚨 DEBUG: feedback import FAILED: {str(e)}")
-    main_feedback = None
-
-st.error("🚨 DEBUG: All imports completed")
+from webpages.ranking import main_ranking
+from webpages.web import main_web
+from webpages.app import main_app
+from webpages.feedback import main_feedback
 
 st.set_page_config(page_title="Multiple Dashboards", page_icon="📈",layout="wide",initial_sidebar_state='collapsed')
 
@@ -72,36 +43,14 @@ page = option_menu(None, ["Ranking", "Web",  "App", 'Feedback'],
 
 st.markdown("---")
 
-st.error(f"🚨 DEBUG: Page selected: {page}")
-
 if page == 'Ranking':
-    st.error("🚨 DEBUG: About to call main_ranking()")
-    if main_ranking is not None:
-        try:
-            main_ranking()
-            st.error("🚨 DEBUG: main_ranking() completed successfully")
-        except Exception as e:
-            st.error(f"🚨 DEBUG: main_ranking() FAILED: {str(e)}")
-    else:
-        st.error("🚨 DEBUG: main_ranking is None, cannot call")
+    main_ranking()
 
 elif page == 'Web':
-    st.error("🚨 DEBUG: About to call main_web()")
-    if main_web is not None:
-        main_web()
-    else:
-        st.error("🚨 DEBUG: main_web is None, cannot call")
+    main_web()
 
 elif page == 'App':
-    st.error("🚨 DEBUG: About to call main_app()")
-    if main_app is not None:
-        main_app()
-    else:
-        st.error("🚨 DEBUG: main_app is None, cannot call")
+    main_app()
 
 elif page == 'Feedback':
-    st.error("🚨 DEBUG: About to call main_feedback()")
-    if main_feedback is not None:
-        main_feedback()
-    else:
-        st.error("🚨 DEBUG: main_feedback is None, cannot call")
+    main_feedback()
