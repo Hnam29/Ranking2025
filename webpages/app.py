@@ -31,7 +31,7 @@ def main_app():
         page_bg_img = f"""
         <style>
             div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(1) > div:nth-child(1) > div[data-testid="stVerticalBlock"] > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {{
-                background-image: url("data:image/png;base64,{img}"); 
+                background-image: url("data:image/jpeg;base64,{img}"); 
                 border-radius: 5px;
                 padding: 0 0 15px 10px;
                 }}
