@@ -431,7 +431,7 @@ def main_ranking():
 
         # Try to load Excel file with logo mappings (try both files)
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        excel_files = ['web_logo_mapping.xlsx', 'web_logo_mapping_update.xlsx']
+        excel_files = ['updated_logo_path.xlsx', 'web_logo_mapping.xlsx', 'web_logo_mapping_update.xlsx']
         data_df = pd.DataFrame()
 
         for excel_file in excel_files:
