@@ -43,7 +43,7 @@ def main_web():
       page_bg_img = f"""
       <style>
          div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {{
-               background-image: url("data:image/png;base64,{img}"); 
+               background-image: url("data:image/jpeg;base64,{img}"); 
                border-radius: 5px;
             }}
       </style>
