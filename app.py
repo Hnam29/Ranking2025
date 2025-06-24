@@ -62,7 +62,7 @@ def main():
     # Navigation menu
     page = st.sidebar.selectbox(
         "Choose a page:",
-        ["🏠 Home", "📱 App Analysis", "🌐 Website Analysis", "📊 Rankings", "💬 Feedback"],
+        ["🏠 Home", "📊 Rankings", "📱 App Analysis", "🌐 Website Analysis", "💬 Feedback"],
         index=0
     )
     
