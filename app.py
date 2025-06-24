@@ -15,6 +15,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+LOGO_PATH = '/webpages/Logo.png'
+st.logo(LOGO_PATH, size='small')
+
 # Add the current directory to Python path for imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
