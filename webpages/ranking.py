@@ -434,14 +434,24 @@ def main_ranking():
         excel_files = ['web_logo_mapping.xlsx', 'web_logo_mapping_update.xlsx']
         data_df = pd.DataFrame()
 
+        # Debug: Show current working directory and project root
+        st.info(f"🔍 Debug - Current file: {__file__}")
+        st.info(f"🔍 Debug - Project root: {project_root}")
+        st.info(f"🔍 Debug - Current working directory: {os.getcwd()}")
+
         for excel_file in excel_files:
             excel_path = os.path.join(project_root, excel_file)
+            st.info(f"🔍 Trying to load: {excel_path}")
             try:
                 data_df = pd.read_excel(excel_path)
                 st.success(f"✅ Loaded logo mapping from: {excel_file}")
                 st.info(f"📊 Found {len(data_df)} total entries, {data_df[data_df.get('logos_path', pd.Series()).notna()].shape[0] if 'logos_path' in data_df.columns else 0} with logo paths")
                 break
-            except FileNotFoundError:
+            except FileNotFoundError as e:
+                st.warning(f"❌ File not found: {excel_path}")
+                continue
+            except Exception as e:
+                st.error(f"❌ Error loading {excel_file}: {str(e)}")
                 continue
 
         if data_df.empty:
@@ -449,9 +459,17 @@ def main_ranking():
             # Show what files are actually available for debugging
             try:
                 available_files = [f for f in os.listdir(project_root) if f.endswith('.xlsx')]
-                st.info(f"📁 Available Excel files: {available_files}")
-            except:
-                pass
+                st.info(f"📁 Available Excel files in project root: {available_files}")
+
+                # Also check current working directory
+                cwd_files = [f for f in os.listdir(os.getcwd()) if f.endswith('.xlsx')]
+                st.info(f"📁 Available Excel files in CWD: {cwd_files}")
+
+                # List all files in project root for debugging
+                all_files = os.listdir(project_root)[:20]  # Limit to first 20 files
+                st.info(f"📁 First 20 files in project root: {all_files}")
+            except Exception as e:
+                st.error(f"❌ Error listing files: {str(e)}")
 
             data_df = pd.DataFrame()  # Empty dataframe as fallback
 
