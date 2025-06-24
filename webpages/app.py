@@ -508,15 +508,56 @@ def main_app():
                 WORDCLOUD_AVAILABLE = False
                 st.warning("WordCloud package not available. Word cloud visualization disabled.")
 
-            # Try to import underthesea, handle gracefully if not available
+            # Try to import Vietnamese text processing libraries in order of preference
+            TOKENIZER_TYPE = None
+
+            # First choice: underthesea (best accuracy but deployment issues)
             try:
                 from underthesea import word_tokenize
-                UNDERTHESEA_AVAILABLE = True
+                TOKENIZER_TYPE = "underthesea"
+                st.success("✅ Using underthesea for Vietnamese text processing (highest accuracy)")
             except ImportError:
-                UNDERTHESEA_AVAILABLE = False
-                # Fallback to simple tokenization
-                def word_tokenize(text, format="text"):
-                    return text
+                # Second choice: PyVi (good accuracy, pure Python, Vietnamese-specific)
+                try:
+                    from pyvi import ViTokenizer
+                    def word_tokenize(text, format="text"):
+                        # PyVi returns text with spaces between syllables
+                        tokenized = ViTokenizer.tokenize(text)
+                        if format == "text":
+                            return tokenized
+                        else:
+                            return tokenized.split()
+                    TOKENIZER_TYPE = "pyvi"
+                    st.info("📝 Using PyVi for Vietnamese text processing (good accuracy)")
+                except ImportError:
+                    # Third choice: Enhanced regex-based Vietnamese tokenization
+                    try:
+                        import regex as re
+                        def word_tokenize(text, format="text"):
+                            # Enhanced Vietnamese word boundary detection
+                            # This regex handles Vietnamese diacritics and compound words better
+                            vietnamese_word_pattern = r'\b[\p{L}]+\b'
+                            tokens = re.findall(vietnamese_word_pattern, text, re.UNICODE)
+                            if format == "text":
+                                return ' '.join(tokens)
+                            else:
+                                return tokens
+                        TOKENIZER_TYPE = "regex"
+                        st.info("🔤 Using enhanced regex for Vietnamese text processing (moderate accuracy)")
+                    except ImportError:
+                        # Final fallback: simple tokenization
+                        def word_tokenize(text, format="text"):
+                            # Simple but improved tokenization
+                            import string
+                            # Remove punctuation but keep Vietnamese characters
+                            text = text.translate(str.maketrans('', '', string.punctuation))
+                            tokens = text.split()
+                            if format == "text":
+                                return ' '.join(tokens)
+                            else:
+                                return tokens
+                        TOKENIZER_TYPE = "simple"
+                        st.warning("⚠️ Using simple tokenization (basic accuracy)")
 
             # Vietnamese stopwords (you can expand this list)
             vietnamese_stopwords = set([
@@ -530,8 +571,8 @@ def main_app():
                 text = text.lower()
                 # Remove punctuation and digits
                 text = text.translate(str.maketrans('', '', string.punctuation + string.digits))
-                # Tokenize
-                if UNDERTHESEA_AVAILABLE:
+                # Tokenize using the available tokenizer
+                if TOKENIZER_TYPE in ["underthesea", "pyvi", "regex"]:
                     tokens = word_tokenize(text, format="text").split()
                 else:
                     # Simple tokenization fallback
