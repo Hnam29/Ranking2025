@@ -146,9 +146,16 @@ def main_web():
           img = ""  # Use empty string if background image not found
       page_bg_img = f"""
       <style>
-         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {{
-               background-image: url("data:image/png;base64,{img}"); 
+         div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(2) > div:nth-child(1) > div:nth-child(1) {{
+               background-image: url("data:image/jpeg;base64,{img}"); 
                border-radius: 5px;
+               padding-left: 5px;
+            }}
+
+        div[data-testid="stVerticalBlockBorderWrapper"]:nth-of-type(2) > div:nth-child(1) > div:nth-child(3) {{
+               background-image: url("data:image/jpeg;base64,{img}"); 
+               border-radius: 5px;
+               padding-left: 5px;
             }}
       </style>
       """

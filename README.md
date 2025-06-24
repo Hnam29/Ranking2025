@@ -1,27 +1,27 @@
-# EdTech Ranking 2025 - Vietnam Market Analysis
+# [EdTech Ranking 2025](https://edtechagency-ranking2025.streamlit.app/) - Vietnam Market Analysis
 
 A comprehensive ranking system for Vietnamese EdTech platforms, analyzing both websites and mobile applications across multiple criteria.
 
 ## 🚀 Features
 
-- **Multi-criteria Evaluation**: Speed, Security, Accessibility, Authority, and Readability
+- **Edtech Ranking System**: Ranks Edtech website and app by leveraging frameworks (AI-embedded planning)
 - **Dual Platform Support**: Website and mobile app analysis
 - **Interactive Dashboard**: Streamlit-based web interface
+- **Vietnamese Market Focus**: Specialized for Vietnamese EdTech landscape
 - **Secure Database**: MySQL cloud database with environment-based configuration
 - **Automated Data Collection**: Web scraping and API integration
-- **Vietnamese Market Focus**: Specialized for Vietnamese EdTech landscape
 
 ## 🛠️ Technology Stack
 
 - **Backend**: Python, SQLAlchemy, MySQL (Aiven Cloud)
 - **Frontend**: Streamlit
-- **Data Collection**: BeautifulSoup, Selenium, API integrations
+- **Data Collection**: Crawl4AI, Selenium, API integrations
 - **Database**: MySQL with SSL encryption
 - **Security**: Environment variables for credential management
 
 ## 📋 Prerequisites
 
-- Python 3.8+
+- Python 3.11+
 - MySQL database (Aiven Cloud recommended)
 - SSL certificate for database connection
 
@@ -97,8 +97,9 @@ The system uses MySQL with the following key tables:
 ├── Criteria-Scrapers/  # Data collection scripts
 ├── get_data_from_db.py # Database connection module
 ├── requirements.txt    # Python dependencies
-├── .env.example       # Environment template
-└── README.md          # This file
+├── Main.py             # Main file
+├── .env.example        # Environment template
+└── README.md           # This file
 ```
 
 ## 🤝 Contributing
