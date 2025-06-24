@@ -395,23 +395,15 @@ def main_ranking():
         from pathlib import Path
 
         def image_to_base64(path):
-            """Simple image to base64 converter with straightforward path mapping"""
+            """Simple image to base64 converter for logo files"""
             if pd.isna(path) or not isinstance(path, str) or path.strip() == '':
                 return None
 
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-            # Simple path mapping: logos_web/filename.ext -> logo_processed_web/filename.ext
-            if path.startswith('logos_web/'):
-                # Replace logos_web with logo_processed_web
-                corrected_path = path.replace('logos_web/', 'logo_processed_web/')
-                full_path = os.path.join(project_root, corrected_path)
-            elif path.startswith('logo_web/'):
-                # Handle legacy logo_web folder
-                corrected_path = path.replace('logo_web/', 'logo_processed_web/')
-                full_path = os.path.join(project_root, corrected_path)
-            elif not os.path.isabs(path):
-                # Relative path
+            # Handle different path formats
+            if not os.path.isabs(path):
+                # Relative path - join with project root
                 full_path = os.path.join(project_root, path)
             else:
                 # Absolute path
@@ -453,13 +445,15 @@ def main_ranking():
         #     data_df = pd.DataFrame()  # Empty dataframe as fallback
 
         # Check if data_df is available and has required columns
-        # Handle both 'logo_path' and 'logos_path' column names
+        # Handle multiple possible column names for logo paths
         logo_column = None
         if data_df is not None and not data_df.empty:
-            if 'logos_path' in data_df.columns:
-                logo_column = 'logos_path'
-            elif 'logo_path' in data_df.columns:
-                logo_column = 'logo_path'
+            # Check for various possible column names
+            possible_columns = ['logo_processed_webpath', 'logos_path', 'logo_path', 'logo_url', 'logo_file']
+            for col in possible_columns:
+                if col in data_df.columns:
+                    logo_column = col
+                    break
 
         if logo_column:
             # Convert local paths to base64 strings
