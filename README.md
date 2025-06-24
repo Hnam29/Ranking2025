@@ -1,4 +1,4 @@
-# EdTech Ranking 2025 - Vietnam Market Analysis
+# [EdTech Ranking 2025](https://edtechagency-ranking2025.streamlit.app/) - Vietnam Market Analysis
 
 A comprehensive ranking system for Vietnamese EdTech platforms, analyzing both websites and mobile applications across multiple criteria.
 
