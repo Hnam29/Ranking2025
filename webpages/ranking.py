@@ -551,7 +551,7 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_k12 = data_df[data_df['Segment'] == 'K12']
                 if not data_df_k12.empty:
-                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    data_df_k12['logo_base64'] = data_df_k12['logo_base64'].fillna("Not Found")
                     
                     # Use data_editor with ImageColumn
                     st.data_editor(
@@ -572,7 +572,7 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_he = data_df[data_df['Segment'] == 'HE']
                 if not data_df_he.empty:
-                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    data_df_he['logo_base64'] = data_df_he['logo_base64'].fillna("Not Found")
                     
                     # Use data_editor with ImageColumn
                     st.data_editor(
@@ -593,7 +593,7 @@ def main_ranking():
             if not data_df.empty and 'Segment' in data_df.columns and 'edtech_name' in data_df.columns and 'logo_base64' in data_df.columns:
                 data_df_kd = data_df[data_df['Segment'] == 'Mầm non']
                 if not data_df_kd.empty:
-                    data_df_wk['logo_base64'] = data_df_wk['logo_base64'].fillna("Not Found")
+                    data_df_kd['logo_base64'] = data_df_kd['logo_base64'].fillna("Not Found")
                     
                     # Use data_editor with ImageColumn
                     st.data_editor(
